@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: mysql
+    build:
+      context: .
+      dockerfile: containers/mysql/Dockerfile
+    # M1チップでも動くように
+    platform: linux/x86_64
+    # ローカルの/data/dbをコンテナの/var/lib/mysqlにマウンティング
+    volumes:
+      - db_data:/var/lib/mysql
+    # 環境変数
+    env_file:
+      - .env
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: containers/django/Dockerfile
+    volumes:
+      - .:/code
+      - ./static:/static
+    ports:
+      - "8000:8000"
+      # デバッグ用ポート
+      - "8080:8080"
+    command: sh -c "chmod 755 /code/entrypoint.sh && /code/entrypoint.sh"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+volumes:
+  db_data:
+  static:
