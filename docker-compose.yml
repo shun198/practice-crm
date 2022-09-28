@@ -28,7 +28,8 @@ services:
       - "8000:8000"
       # デバッグ用ポート
       - "8080:8080"
-    command: sh -c "chmod 755 /code/entrypoint.sh && /code/entrypoint.sh"
+    command:  bash -c "python manage.py collectstatic --noinput && \
+              python manage.py runserver 0.0.0.0:8000"
     env_file:
       - ./.env
     depends_on:
