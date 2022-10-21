@@ -16,6 +16,10 @@ services:
       - .env
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
   app:
     container_name: app
     build:
@@ -28,8 +32,7 @@ services:
       - "8000:8000"
       # デバッグ用ポート
       - "8080:8080"
-    command:  bash -c "python manage.py collectstatic --noinput && \
-              python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "chmod 755 /code/entrypoint.sh && /code/entrypoint.sh"
     env_file:
       - ./.env
     depends_on:
