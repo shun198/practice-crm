@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 # ignore migration files
 migrations/
+# ignore static files
+static/
