@@ -13,7 +13,7 @@ services:
       - db_data:/var/lib/mysql
     # 環境変数
     env_file:
-      - .env.local
+      - .env
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD
       interval: 10s
@@ -34,7 +34,7 @@ services:
       - "8080:8080"
     command: sh -c "chmod 755 /code/entrypoint.sh && /code/entrypoint.sh"
     env_file:
-      - .env.local
+      - .env
     depends_on:
       db:
         condition: service_healthy
