@@ -1,0 +1,23 @@
+name: Tests
+on: [pull_request]
+jobs:
+  test:
+    name: Run Test Code
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: generate .env
+        run:
+          chmod +x set-up-env.test.sh && sh set-up-env.test.sh
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+          DEBUG: ${{ secrets.DEBUG }}
+      - name: Test
+        run:
+          docker-compose run --rm app sh -c "poetry run python manage.py test"
