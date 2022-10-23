@@ -14,6 +14,8 @@ services:
     # 環境変数
     env_file:
       - .env
+    ports:
+      - '3306:3306'
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD
       interval: 10s
