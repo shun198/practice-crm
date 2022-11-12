@@ -43,8 +43,6 @@ services:
   mail:
     container_name: mail
     image: schickling/mailcatcher
-    depends_on:
-      - redis
     ports:
       - "1080:1080"
       - "1025:1025"
