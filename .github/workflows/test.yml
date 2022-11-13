@@ -18,9 +18,10 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
           DEBUG: ${{ secrets.DEBUG }}
+          DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
       - name: Test
         run:
-          docker-compose run --rm app sh -c "poetry run pytest -v -s"
+          docker-compose run --rm app sh -c "poetry run pytest -v -s --duration=0"
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main
         with:
