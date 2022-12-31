@@ -21,7 +21,7 @@ jobs:
           DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
       - name: Test
         run:
-          docker-compose run --rm app sh -c "poetry run pytest -v -s --duration=0"
+          docker-compose run --rm app sh -c "poetry run pytest"
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main
         with:
