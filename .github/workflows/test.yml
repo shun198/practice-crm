@@ -20,8 +20,10 @@ jobs:
           DEBUG: ${{ secrets.DEBUG }}
           DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
       - name: Test
-        run:
-          docker-compose run --rm app sh -c "poetry run pytest"
+        # 入力チャネルを開く
+        run: |
+          docker-compose up -d --build
+          docker-compose exec -T app poetry run pytest --cov --cov-branch --cov-report=term-missing --suppress-no-test-exit-code
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main
         with:
