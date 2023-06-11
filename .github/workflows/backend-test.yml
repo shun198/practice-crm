@@ -45,19 +45,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Grant privileges to user
         run: mysql --protocol=tcp -h 127.0.0.1 -P 3306 -u root -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'%'; FLUSH PRIVILEGES;"
-      # https://stackoverflow.com/questions/23937933/could-not-run-curl-config-errno-2-no-such-file-or-directory-when-installing
-      # pycurl用のパッケージをインストール
-      - name: Install packages for pycurl
-        run: sudo apt-get install libssl-dev libcurl4-openssl-dev python-dev
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Use cache dependencies
-        uses: actions/setup-python@v4
+      - name: Setup Poetry
+        uses: ./.github/actions/set-up-poetry
         with:
-          python-version: '3.11'
-          cache: 'poetry'
-      - name: Install Packages
-        run: poetry install
+          working-directory: application
       - name: Run migration
         run: |
           poetry run python manage.py makemigrations

@@ -1,0 +1,26 @@
+name: 'Setup Node.js'
+
+description: 'Setup Node.js by using cache and npm'
+
+inputs:
+  working-directory:
+    description: 'working-directory of package-lock.json'
+    required: true
+
+runs:
+  # compositeが必須
+  using: 'composite'
+  steps:
+      - name: Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+      - name: Cache NodeJS
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+        shell: bash
+        working-directory: ${{ inputs.working-directory }}

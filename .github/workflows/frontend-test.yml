@@ -1,0 +1,31 @@
+# アクション名
+name: Jest
+
+# タイミングを指定
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+env:
+  WORKING_DIRECTORY: frontend
+
+jobs:
+  test:
+    name: Run test codes
+    if: |
+      github.event.pull_request.draft == false
+      && !startsWith(github.head_ref, 'release')
+      && !startsWith(github.head_ref, 'doc')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: ./.github/actions/set-up-node
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
+      - name: Show coverage
+        run: npm test -- --bail --maxWorkers=100% --watchAll=false --coverage

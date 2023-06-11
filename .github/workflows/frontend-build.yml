@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+env:
+  WORKING_DIRECTORY: frontend
+
+jobs:
+  build:
+    name: Build
+    if: |
+      github.event.pull_request.draft == false
+      && !startsWith(github.head_ref, 'release')
+      && !startsWith(github.head_ref, 'doc')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: ./.github/actions/set-up-node
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
+      - name: Run npm run build
+        run: npm run build
