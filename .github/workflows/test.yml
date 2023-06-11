@@ -1,27 +1,73 @@
-name: Tests
-on: [pull_request]
+name: Run Pytest
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+env:
+  SECRET_KEY: test
+  DJANGO_SETTINGS_MODULE: project.settings.local
+  ALLOWED_HOSTS: 127.0.0.1
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: test-db
+  MYSQL_HOST: 127.0.0.1
+  MYSQL_PORT: 3306
+  MYSQL_USER: test
+  MYSQL_PASSWORD: test
+
 jobs:
-  test:
+  Setup:
+    if: |
+      github.event.pull_request.draft == false
+      && !startsWith(github.head_ref, 'release')
+      && !startsWith(github.head_ref, 'doc')
     name: Run Test Code
     runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: generate .env
-        run:
-          chmod +x set-up-env.test.sh && sh set-up-env.test.sh
+    defaults:
+      run:
+        working-directory: application
+    services:
+      db:
+        image: mysql:8.0
+        ports:
+          - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_USER: ${{ secrets.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
-          DEBUG: ${{ secrets.DEBUG }}
-          DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
-      - name: Test
-        # 入力チャネルを開く
+          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Chekcout code
+        uses: actions/checkout@v3
+      - name: Grant privileges to user
+        run: mysql --protocol=tcp -h 127.0.0.1 -P 3306 -u root -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'%'; FLUSH PRIVILEGES;"
+      # https://stackoverflow.com/questions/23937933/could-not-run-curl-config-errno-2-no-such-file-or-directory-when-installing
+      # pycurl用のパッケージをインストール
+      - name: Install packages for pycurl
+        run: sudo apt-get install libssl-dev libcurl4-openssl-dev python-dev
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Use cache dependencies
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'poetry'
+      - name: Install Packages
+        run: poetry install
+      - name: Run migration
         run: |
-          docker-compose up -d --build
-          docker-compose exec -T app poetry run pytest --cov=application/tests/ --cov-branch --suppress-no-test-exit-code
-
+          poetry run python manage.py makemigrations
+          poetry run python manage.py migrate
+      - name: Run Pytest
+        run: |
+          set -o pipefail
+          poetry run pytest --junitxml=pytest.xml -x -n auto --cov --no-cov-on-fail --suppress-no-test-exit-code | tee pytest-coverage.txt
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@main
+        with:
+          pytest-coverage-path: application/pytest-coverage.txt
+          junitxml-path: application/pytest.xml

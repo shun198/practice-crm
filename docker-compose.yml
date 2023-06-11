@@ -12,8 +12,11 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     # 環境変数
-    env_file:
-      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
     ports:
       - "3306:3306"
     healthcheck:
@@ -28,13 +31,15 @@ services:
       context: .
       dockerfile: containers/django/Dockerfile
     volumes:
-      - .:/code
+      - ./application:/code
       - ./static:/static
     ports:
       - "8000:8000"
       # デバッグ用ポート
       - "8080:8080"
-    command: sh -c "chmod 755 /code/entrypoint.sh && /code/entrypoint.sh"
+    command: sh -c "/usr/local/bin/entrypoint.sh"
+    stdin_open: true
+    tty: true
     env_file:
       - .env
     depends_on:
@@ -46,6 +51,27 @@ services:
     ports:
       - "1080:1080"
       - "1025:1025"
+
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sns
+      - AWS_ACCESS_KEY_ID=localstack
+      - AWS_SECRET_ACCESS_KEY=localstack
+      - DEBUG=1
+    volumes:
+      - localstack_data:/tmp/localstack/data
+      - localstack_bin:/var/lib/localstack
+
 volumes:
   db_data:
   static:
+  localstack_data:
+  localstack_bin:
+
+networks:
+  default:
+    name: testnet
