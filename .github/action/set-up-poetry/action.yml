@@ -6,7 +6,7 @@ inputs:
   working-directory:
     description: 'working-directory of pyproject.toml'
     required: true
-    default: application
+    default: backend
 
 runs:
   # compositeが必須

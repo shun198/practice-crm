@@ -48,7 +48,7 @@ jobs:
       - name: Setup Poetry
         uses: ./.github/actions/set-up-poetry
         with:
-          working-directory: application
+          working-directory: backend
       - name: Run migration
         run: |
           poetry run python manage.py makemigrations
@@ -60,5 +60,5 @@ jobs:
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main
         with:
-          pytest-coverage-path: application/pytest-coverage.txt
-          junitxml-path: application/pytest.xml
+          pytest-coverage-path: backend/pytest-coverage.txt
+          junitxml-path: backend/pytest.xml

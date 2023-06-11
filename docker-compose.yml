@@ -31,7 +31,7 @@ services:
       context: .
       dockerfile: containers/django/Dockerfile
     volumes:
-      - ./application:/code
+      - ./backend:/code
       - ./static:/static
     ports:
       - "8000:8000"

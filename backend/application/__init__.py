@@ -14,7 +14,3 @@ if os.environ.get("CI_MAKING_DOCS") is not None:
     import django
 
     django.setup()
-else:
-    from .celery import app as celery_app
-
-    __all__ = ["celery_app"]
