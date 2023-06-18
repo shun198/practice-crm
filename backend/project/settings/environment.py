@@ -6,11 +6,11 @@ from pydantic import BaseSettings
 class DjangoSettings(BaseSettings):
     """Django関連の環境変数を設定するクラス"""
 
-    SECRET_KEY: str
-    ALLOWED_HOSTS: str
-    MYSQL_DATABASE: str
-    MYSQL_USER: str
-    MYSQL_PASSWORD: str
+    SECRET_KEY: str = "django"
+    ALLOWED_HOSTS: str = "localhost 127.0.0.1 [::1]"
+    MYSQL_DATABASE: str = "django-db"
+    MYSQL_USER: str = "django"
+    MYSQL_PASSWORD: str = "django"
     MYSQL_HOST: str = "db"
     MYSQL_PORT: int = 3306
     TRUSTED_ORIGINS: str = "http://localhost:3000"
