@@ -56,14 +56,28 @@ services:
   nginx:
     container_name: web
     build:
-      context: containers/nginx/
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: containers/nginx/Dockerfile
     volumes:
       - ./static:/static
     ports:
       - 80:80
     depends_on:
       - app
+
+  front:
+    container_name: front
+    build:
+      context: .
+      dockerfile: containers/front/Dockerfile
+    volumes:
+      - ./frontend:/code
+      - node_modules_volume:/frontend/node_modules
+    command: sh -c "npm start"
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
   localstack:
     image: localstack/localstack
@@ -84,6 +98,7 @@ volumes:
   static:
   localstack_data:
   localstack_bin:
+  node_modules_volume:
 
 networks:
   default:
