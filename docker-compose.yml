@@ -25,6 +25,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+
   app:
     container_name: app
     build:
@@ -51,6 +52,18 @@ services:
     ports:
       - "1080:1080"
       - "1025:1025"
+
+  nginx:
+    container_name: web
+    build:
+      context: containers/nginx/
+      dockerfile: Dockerfile
+    volumes:
+      - ./static:/static
+    ports:
+      - 80:80
+    depends_on:
+      - app
 
   localstack:
     image: localstack/localstack
