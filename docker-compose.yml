@@ -73,7 +73,7 @@ services:
     volumes:
       - ./frontend:/code
       - node_modules_volume:/frontend/node_modules
-    command: sh -c "npm start"
+    command: sh -c "npm run dev"
     ports:
       - "3000:3000"
     environment:
