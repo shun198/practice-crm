@@ -3,6 +3,7 @@ RUN_APP = docker-compose exec $(CONTAINER_NAME)
 RUN_POETRY =  $(RUN_APP) poetry run
 RUN_DJANGO = $(RUN_POETRY) python manage.py
 RUN_PYTEST = $(RUN_POETRY) pytest
+RUN_TERRAFORM = docker-compose -f infra/docker-compose.yml run --rm terraform
 
 up:
 	docker-compose up -d
@@ -53,3 +54,27 @@ db:
 
 pdoc:
 	$(RUN_APP) env CI_MAKING_DOCS=1 poetry run pdoc -o docs application
+
+vault:
+	aws-vault exec $(IAM_USER) --duration=$(DURATION)
+
+init:
+	$(RUN_TERRAFORM) init
+
+fmt:
+	$(RUN_TERRAFORM) fmt
+
+validate:
+	$(RUN_TERRAFORM) validate
+
+show:
+	$(RUN_TERRAFORM) show
+
+apply:
+	$(RUN_TERRAFORM) apply -auto-approve
+
+graph:
+	$(RUN_TERRAFORM) graph | dot -Tsvg > graph.svg
+
+destroy:
+	$(RUN_TERRAFORM) destroy
