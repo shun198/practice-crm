@@ -1,0 +1,60 @@
+name: GitHub Pages
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    branches-ignore:
+      - 'release/**'
+      - 'doc/**'
+
+# security: restrict permissions for CI jobs.
+permissions:
+  contents: read
+
+env:
+  SECRET_KEY: test
+  DJANGO_SETTINGS_MODULE: project.settings.local
+  ALLOWED_HOSTS: 127.0.0.1
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: test-db
+  MYSQL_HOST: 127.0.0.1
+  MYSQL_PORT: 3306
+  MYSQL_USER: test
+  MYSQL_PASSWORD: test
+  CI_MAKING_DOCS: 1
+
+jobs:
+  # Build the documentation and upload the static HTML files as an artifact.
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Chekcout code
+        uses: actions/checkout@v3
+      - name: Setup Poetry
+        uses: ./.github/actions/set-up-poetry
+        with:
+          working-directory: backend
+      - name: Create documentation
+        run: poetry run pdoc -o docs application
+      - name: Upload Documents
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # 絶対パスを指定
+          path: backend/docs/
+
+  # Deploy the artifact to GitHub pages.
+  # This is a separate job so that only actions/deploy-pages has the necessary permissions.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v2
