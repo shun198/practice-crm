@@ -5,6 +5,11 @@ RUN_DJANGO = $(RUN_POETRY) python manage.py
 RUN_PYTEST = $(RUN_POETRY) pytest
 RUN_TERRAFORM = docker-compose -f infra/docker-compose.yml run --rm terraform
 
+prepare:
+	docker-compose run --rm front npm install
+	docker-compose build
+	docker-compose up -d
+
 up:
 	docker-compose up -d
 

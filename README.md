@@ -78,12 +78,46 @@
 .
 ├── .devcontainer
 ├── .env
-├── .git
 ├── .github
+│   ├── action
+│   │   ├── set-up-node
+│   │   └── set-up-poetry
+│   ├── release-drafter.yml
+│   └── workflows
+│       ├── backend-deploy.yml
+│       ├── backend-docs.yml
+│       ├── backend-test.yml
+│       ├── frontend-build.yml
+│       ├── frontend-deploy.yml
+│       ├── frontend-docs.yml
+│       ├── frontend-test.yml
+│       └── release-drafter.yml
 ├── .gitignore
 ├── Makefile
 ├── README.md
 ├── backend
+│   ├── .vscode
+│   │   └── launch.json
+│   ├── application
+│   ├── manage.py
+│   ├── poetry.lock
+│   ├── project
+│   └── pyproject.toml
+├── containers
+│   ├── django
+│   │   ├── Dockerfile
+│   │   └── entrypoint.sh
+│   ├── front
+│   │   └── Dockerfile
+│   ├── mysql
+│   │   ├── Dockerfile
+│   │   ├── init.sql
+│   │   └── my.cnf
+│   └── nginx
+│       ├── Dockerfile
+│       └── conf.d
+├── Makefile
+├── README.md
 ├── containers
 ├── docker-compose.yml
 ├── frontend
@@ -107,17 +141,13 @@
 
 <ユーザ名>から.env ファイルをもらい、.env ファイルをルートディレクトリ直下に配置
 
-### プロジェクトの作成
+### コンテナの作成と起動
 
-docker-compose run
-
-### コンテナの起動
-
-docker-compose up -d
+make prepare
 
 ### コンテナの停止
 
-docker-compose down
+make down
 
 ## 動作確認
 
@@ -153,7 +183,7 @@ Docker Desktop か docker-compose のバージョンが古すぎるので最新�
 
 ### Module not found
 
-docker-compose build
+make build
 
 を実行して Docker image を更新してください
 

@@ -1,0 +1,16 @@
+name: Deploy Frontend
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+jobs:
+  Setup:
+    if: |
+      github.event.pull_request.draft == false
+      && !startsWith(github.head_ref, 'release')
+      && !startsWith(github.head_ref, 'doc')
+    name: Run Test Code
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: frontend
