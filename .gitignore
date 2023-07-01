@@ -200,6 +200,3 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
-# next.js
-frontend/.next/*
-frontend/out/
