@@ -7,8 +7,7 @@ RUN_TERRAFORM = docker-compose -f infra/docker-compose.yml run --rm terraform
 
 prepare:
 	docker-compose run --rm front npm install
-	docker-compose build
-	docker-compose up -d
+	docker-compose up -d --build
 
 up:
 	docker-compose up -d
@@ -43,10 +42,6 @@ test:
 test-cov:
 	$(RUN_PYTEST) --cov=application/tests/
 
-loadtest:
-	$(RUN_PYTEST) --alluredir=allure-results
-	sh send_results.sh
-
 format:
 	$(RUN_POETRY) black .
 	$(RUN_POETRY) isort .
@@ -59,9 +54,6 @@ db:
 
 pdoc:
 	$(RUN_APP) env CI_MAKING_DOCS=1 poetry run pdoc -o docs application
-
-vault:
-	aws-vault exec $(IAM_USER) --duration=$(DURATION)
 
 init:
 	$(RUN_TERRAFORM) init
@@ -77,9 +69,6 @@ show:
 
 apply:
 	$(RUN_TERRAFORM) apply -auto-approve
-
-graph:
-	$(RUN_TERRAFORM) graph | dot -Tsvg > graph.svg
 
 destroy:
 	$(RUN_TERRAFORM) destroy
