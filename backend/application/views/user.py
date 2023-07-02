@@ -35,9 +35,7 @@ class UserViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         # バリデーションに失敗したら400を返す
-        if not serializer.is_valid():
-            return JsonResponse(serializer.errors, status=400)
-
+        serializer.is_valid(raise_exception=True)
         email = serializer.validated_data.get("email")
         # メール送信用メソッド
         send_welcome_email(email=email)

@@ -28,11 +28,7 @@ class LoginViewSet(ViewSet):
     def login(self, request):
         """ユーザのログイン"""
         serializer = LoginSerializer(data=request.data)
-        if not serializer.is_valid():
-            return JsonResponse(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
-
+        serializer.is_valid(raise_exception=True)
         employee_number = serializer.validated_data.get("employee_number")
         password = serializer.validated_data.get("password")
         user = authenticate(employee_number=employee_number, password=password)
