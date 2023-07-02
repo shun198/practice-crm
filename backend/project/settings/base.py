@@ -128,6 +128,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+AUTH_USER_MODEL = "application.User"
 
 # STATIC_ROOTを設定
 STATIC_ROOT = "/static/"
