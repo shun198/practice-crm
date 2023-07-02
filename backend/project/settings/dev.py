@@ -26,4 +26,3 @@ AWS_STORAGE_BUCKET_NAME = aws_settings.AWS_STORAGE_BUCKET_NAME
 
 # ログ設定
 dictConfig(ConfFile.get()["dev"]["logging"])
-

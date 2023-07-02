@@ -1,6 +1,7 @@
 import pytest
-from application.tests.common_method import login
 from rest_framework import status
+
+from application.tests.common_method import login
 
 
 @pytest.fixture

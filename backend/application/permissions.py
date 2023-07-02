@@ -1,8 +1,9 @@
 """
 権限用のモジュール
 """
-from application.models import User
 from rest_framework.permissions import BasePermission
+
+from application.models import User
 
 
 class IsPartTimeUser(BasePermission):

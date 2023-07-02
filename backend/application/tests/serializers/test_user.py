@@ -1,4 +1,5 @@
 import pytest
+
 from application.models import User
 from application.serializers.user import UserSerializer
 

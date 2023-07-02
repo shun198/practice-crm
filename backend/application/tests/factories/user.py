@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
-from application.models import User
 from factory import Faker, PostGenerationMethodCall, Sequence
 from factory.django import DjangoModelFactory
+
+from application.models import User
 
 
 class UserFactory(DjangoModelFactory):

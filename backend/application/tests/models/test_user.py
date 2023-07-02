@@ -1,7 +1,8 @@
 import pytest
+from django.db.utils import DataError, IntegrityError
+
 from application.models import User
 from application.tests.factories.user import UserFactory
-from django.db.utils import DataError, IntegrityError
 
 
 def get_user(id):
