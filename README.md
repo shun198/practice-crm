@@ -33,13 +33,13 @@
 4. [開発環境構築](#開発環境構築)
 5. [トラブルシューティング](#トラブルシューティング)
 
-<!-- READMEの作成方法のesaのリンク -->
+<!-- READMEの作成方法のドキュメントのリンク -->
 <br />
 <div align="right">
-    <a href="https://pj100.esa.io/posts/4190"><strong>READMEの作成方法 »</strong></a>
+    <a href="READMEの作成方法のリンク"><strong>READMEの作成方法 »</strong></a>
 </div>
 <br />
-<!-- Dockerfileのesaのリンク -->
+<!-- Dockerfileのドキュメントのリンク -->
 <div align="right">
     <a href="Dockerfileの詳細リンク"><strong>Dockerfileの詳細 »</strong></a>
 </div>
