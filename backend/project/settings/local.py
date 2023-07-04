@@ -1,8 +1,4 @@
 """LOCAL環境用の設定"""
-from logging.config import dictConfig
-
-from application.utils.logs import ConfFile
-
 from .base import *
 
 DEBUG = True
@@ -36,9 +32,3 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 1025
 # 送信中の文章の暗号化をFalseにします
 EMAIL_USE_TLS = False
-
-# ログ設定
-output_path = Path("output")
-if not output_path.exists():
-    output_path.mkdir()
-dictConfig(ConfFile.get()["local"]["logging"])

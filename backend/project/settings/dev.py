@@ -1,7 +1,4 @@
 """DEV環境用の設定"""
-from logging.config import dictConfig
-
-from application.utils.logs import ConfFile
 
 from .base import *
 from .environment import aws_settings
@@ -23,6 +20,3 @@ DEFAULT_FROM_EMAIL = aws_settings.DEFAULT_FROM_EMAIL
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 STATICFILES_STORAGE = "storages.backends.s3boto3.S3StaticStorage"
 AWS_STORAGE_BUCKET_NAME = aws_settings.AWS_STORAGE_BUCKET_NAME
-
-# ログ設定
-dictConfig(ConfFile.get()["dev"]["logging"])

@@ -3,8 +3,9 @@ import datetime
 from json import JSONDecodeError, loads
 from logging import getLogger
 
-from application.utils.logs import LoggerName
 from rest_framework import status
+
+from application.utils.logs import LoggerName
 
 application_logger = getLogger(LoggerName.APPLICATION.value)
 emergency_logger = getLogger(LoggerName.EMERGENCY.value)
@@ -38,11 +39,15 @@ class LoggingMiddleware:
         end_time = datetime.datetime.now()
         duration_time = end_time - start_time
         status_code = response.status_code
-        if status.is_client_error(status_code) or status.is_server_error(status_code):
-            emergency_logger.error(f"{ip} {user_info} {method} {path} 実行時間:{duration_time} APIでエラーが発生しました")
+        if status.is_client_error(status_code) or status.is_server_error(
+            status_code
+        ):
+            emergency_logger.error(
+                f"{ip} {user_info} {method} {path} 実行時間:{duration_time} APIでエラーが発生しました"
+            )
             return response
         message = f"{ip} {user_info} {method} {path} {status_code} 実行時間:{duration_time}"
-        
+
         # JSON形式でない場合は無視
         try:
             json = loads(response.content.decode())

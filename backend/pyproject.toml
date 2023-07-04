@@ -79,60 +79,26 @@ addopts = "-v -s --durations=0"
 [tool.pytest]
 DJANGO_SETTINGS_MODULE = "project.settings.local"
 
-# logの設定（ローカル環境）
-[local.logging]
+# logの設定
+[logging]
 version = 1
-[local.logging.formatters.simple]
-format = "[%(levelname)s] %(name)s %(asctime)s - %(message)s "
-[local.logging.handlers.consoleHandler]
+[logging.formatters.simple]
+format = "[%(levelname)s] %(name)s - %(message)s "
+[logging.handlers.applicationHandler]
 class = "logging.StreamHandler"
-level = "DEBUG"
-formatter = "simple"
-stream = "ext://sys.stdout"
-[local.logging.handlers.applicationHandler]
-class = "logging.handlers.TimedRotatingFileHandler"
-when = "D"
 level = "INFO"
 formatter = "simple"
-filename = "./output/application.log"
-[local.logging.handlers.errorHandler]
-class = "logging.handlers.TimedRotatingFileHandler"
-when = "D"
+stream = "ext://sys.stdout"
+[logging.handlers.errorHandler]
+class = "logging.StreamHandler"
 level = "ERROR"
 formatter = "simple"
-filename = "./output/emergency.log"
-[local.logging.loggers.console]
-level = "DEBUG"
-handlers = ["consoleHandler"]
-propagate = "no"
-[local.logging.loggers.application]
-level = "DEBUG"
-handlers = ["consoleHandler","applicationHandler"]
-propagate = "no"
-[local.logging.loggers.emergency]
-level = "DEBUG"
-handlers = ["consoleHandler","errorHandler"]
-propagate = "no"
-
-# logの設定（dev環境）
-[dev.logging]
-version = 1
-[dev.logging.formatters.simple]
-format = "[%(levelname)s] %(name)s - %(message)s "
-[dev.logging.handlers.consoleHandler]
-class = "logging.StreamHandler"
-level = "DEBUG"
-formatter = "simple"
 stream = "ext://sys.stdout"
-[dev.logging.loggers.console]
+[logging.loggers.application]
 level = "DEBUG"
-handlers = ["consoleHandler"]
+handlers = ["applicationHandler"]
 propagate = "no"
-[dev.logging.loggers.application]
+[logging.loggers.emergency]
 level = "DEBUG"
-handlers = ["consoleHandler"]
-propagate = "no"
-[dev.logging.loggers.emergency]
-level = "DEBUG"
-handlers = ["consoleHandler"]
+handlers = ["errorHandler"]
 propagate = "no"

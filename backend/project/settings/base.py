@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import os
+from logging.config import dictConfig
 from pathlib import Path
+
+from application.utils.logs import ConfFile
 
 from .environment import django_settings
 
@@ -150,3 +153,6 @@ CORS_ALLOWED_ORIGINS = django_settings.TRUSTED_ORIGINS.split()
 # プリフライト(事前リクエスト)の設定
 # 30分だけ許可
 CORS_PREFLIGHT_MAX_AGE = 60 * 30
+
+# ログ設定
+dictConfig(ConfFile.get()["logging"])

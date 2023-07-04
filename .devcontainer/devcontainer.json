@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/docker-existing-docker-compose
 // If you want to run as a non-root user in the container, see .devcontainer/docker-compose.yml.
 {
-    "name": "Existing Docker Compose (Extend)",
+    "name": "django container",
   
     // Update the 'dockerComposeFile' list if you have more compose files or use different names.
     // The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
@@ -14,8 +14,11 @@
   
     // The optional 'workspaceFolder' property is the path VS Code should open by default when
     // connected. This is typically a file mount in .devcontainer/docker-compose.yml
-    "workspaceFolder": "/code"
+    "workspaceFolder": "/code",
   
+    "settings": {
+      "python.pythonPath": "/root/.cache/pypoetry/virtualenvs/api-MATOk_fk-py3.11/bin/python"
+    },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // "forwardPorts": [],
   
@@ -30,5 +33,37 @@
   
     // Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
     // "remoteUser": "vscode"
+    "extensions": [
+      "fabiospampinato.vscode-diff",
+      "bierner.markdown-preview-github-styles",
+      "bmalehorn.shell-syntax",
+      "donjayamanne.githistory",
+      "cschleiden.vscode-github-actions",
+      "eamodio.gitlens",
+      "ecmel.vscode-html-css",
+      "formulahendry.auto-close-tag",
+      "formulahendry.auto-complete-tag",
+      "formulahendry.auto-rename-tag",
+      "geyao.html-snippets",
+      "GitHub.vscode-pull-request-github",
+      "Gruntfuggly.todo-tree",
+      "ionutvmi.path-autocomplete",
+      "kaiwood.endwise",
+      "littlefoxteam.vscode-python-test-adapter",
+      "mhutchie.git-graph",
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "sohamkamani.code-eol",
+      "streetsidesoftware.code-spell-checker",
+      "VisualStudioExptTeam.intellicode-api-usage-examples",
+      "vscode-icons-team.vscode-icons",
+      "vscode-snippet.snippet",
+      "njpwerner.autodocstring",
+      "oderwat.indent-rainbow",
+      "fusiondev.new-zenkaku",
+      "mosapride.zenkaku",
+      "hbenl.vscode-test-explorer",
+      "usernamehw.errorlens"
+    ]
   }
   
