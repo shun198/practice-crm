@@ -1,10 +1,15 @@
 import React from 'react';
+import Link from "next/link";
+import { fetch_LOGIN } from '../features/utils/fetch';
 
 const HelloWorld = () => {
   return (
-    <div>
-      <h1>Hello World!</h1>
-    </div>
+    <>
+      <h1>Login</h1>
+      <div>
+        <Link href="/"><h1 className='className="underline hover:no-underline text-gray-400 text-center text-sm my-3'>Homeへ</h1></Link>
+      </div>
+    </>
   );
 };
 

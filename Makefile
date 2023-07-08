@@ -39,9 +39,6 @@ superuser:
 test:
 	$(RUN_PYTEST)
 
-test-cov:
-	$(RUN_PYTEST) --cov=application/tests/
-
 format:
 	$(RUN_POETRY) black .
 	$(RUN_POETRY) isort .
