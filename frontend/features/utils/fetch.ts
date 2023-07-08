@@ -17,6 +17,7 @@ type LoginProps = {
 export const baseUrl = process.env.NEXT_PUBLIC_RESTAPI_URL + '/api/';
 export const credentials = 'include';
 
+// https://developer.mozilla.org/ja/docs/Web/API/fetch
 export const fetch_GET = ({ url, resFunction }: GetProps) => {
   const csrftoken = Cookies.get('csrftoken') || '';
   fetch(baseUrl + url, {

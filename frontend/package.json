@@ -9,7 +9,8 @@
     "lint": "next lint",
     "format": "prettier --write './**/*.{ts,tsx,json}'",
     "lint:fix": "eslint --ext .js,jsx,.ts,.tsx --fix",
-    "test": "jest"
+    "test": "jest",
+    "debug": "next dev -- --port 3030"
   },
   "dependencies": {
     "@mui/icons-material": "^5.11.16",
