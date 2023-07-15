@@ -7,12 +7,11 @@ env:
   SECRET_KEY: test
   DJANGO_SETTINGS_MODULE: project.settings.local
   ALLOWED_HOSTS: 127.0.0.1
-  MYSQL_ROOT_PASSWORD: root
-  MYSQL_DATABASE: test-db
-  MYSQL_HOST: 127.0.0.1
-  MYSQL_PORT: 3306
-  MYSQL_USER: test
-  MYSQL_PASSWORD: test
+  POSTGRES_NAME: test
+  POSTGRES_USER: test
+  POSTGRES_PASSWORD: test
+  POSTGRES_HOST: 127.0.0.1
+  POSTGRES_PORT: 5432
 
 jobs:
   Setup:
@@ -27,24 +26,23 @@ jobs:
         working-directory: application
     services:
       db:
-        image: mysql:8.0
+        # PostgresのDocker imageを使用
+        image: postgres:15.2
         ports:
-          - 3306:3306
+          - 5432:5432
         env:
-          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_ROOT_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
-          MYSQL_USER: ${{ env.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+          POSTGRES_NAME: ${{ env.POSTGRES_NAME }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        # Postgresより先にDjangoが起動しないようヘルスチェックを使って起動順を制御
         options: >-
-          --health-cmd "mysqladmin ping"
+          --health-cmd "pg_isready"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
     steps:
       - name: Chekcout code
         uses: actions/checkout@v3
-      - name: Grant privileges to user
-        run: mysql --protocol=tcp -h 127.0.0.1 -P 3306 -u root -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'%'; FLUSH PRIVILEGES;"
       - name: Setup Poetry
         uses: ./.github/actions/set-up-poetry
         with:

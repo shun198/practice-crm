@@ -8,11 +8,11 @@ class DjangoSettings(BaseSettings):
 
     SECRET_KEY: str = "secretkey"
     ALLOWED_HOSTS: str = "localhost 127.0.0.1 [::1] back web"
-    MYSQL_DATABASE: str = "django-db"
-    MYSQL_USER: str = "django"
-    MYSQL_PASSWORD: str = "django"
-    MYSQL_HOST: str = "db"
-    MYSQL_PORT: int = 3306
+    POSTGRES_NAME: str = "postgres"
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_HOST: str = "db"
+    POSTGRES_PORT: int = 5432
     TRUSTED_ORIGINS: str = "http://localhost"
 
 

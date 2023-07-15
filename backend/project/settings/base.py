@@ -91,13 +91,13 @@ WSGI_APPLICATION = "project.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django.db.backends.postgresql",
         # コンテナ内の環境変数をDATABASESのパラメータに反映
-        "NAME": django_settings.MYSQL_DATABASE,
-        "USER": django_settings.MYSQL_USER,
-        "PASSWORD": django_settings.MYSQL_PASSWORD,
-        "HOST": django_settings.MYSQL_HOST,
-        "PORT": django_settings.MYSQL_PORT,
+        "NAME": django_settings.POSTGRES_NAME,
+        "USER": django_settings.POSTGRES_USER,
+        "PASSWORD": django_settings.POSTGRES_PASSWORD,
+        "HOST": django_settings.POSTGRES_HOST,
+        "PORT": django_settings.POSTGRES_PORT,
     }
 }
 

@@ -1,19 +1,44 @@
-name: Deploy Frontend
+name: Deploy Frontend Project to S3
+
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+  push:
+    branches:
+      - main
+
+env:
+  BUCKET_NAME: frontend-deploy-demo
+  REGION_NAME: ap-northeast-1
 
 jobs:
-  Setup:
-    if: |
-      github.event.pull_request.draft == false
-      && !startsWith(github.head_ref, 'release')
-      && !startsWith(github.head_ref, 'doc')
-    name: Run Test Code
-    runs-on: ubuntu-20.04
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read # This is required for actions/checkout
     defaults:
       run:
         working-directory: frontend
     steps:
-      - name: Chekcout code
+      - name: Checkout
         uses: actions/checkout@v3
+      # - name: configure aws credentials
+      #   uses: aws-actions/configure-aws-credentials@v2
+      #   with:
+      #     role-to-assume: arn:aws:iam::XXXXXXXXXXXX:role/github-actions-deploy-s3-bucket
+      #     role-session-name: samplerolesession
+      #     aws-region: ${{ env.REGION_NAME }}
+      # - name: Setup NodeJS
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: '16'
+      # - name: Cache NodeJS
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: '**/node_modules'
+      #     key: node-modules-${{ hashFiles('**/package-lock.json') }}
+      # - name: Install dependencies
+      #   run: npm ci --omit=dev
+      # - name: Build and Export
+      #   run: npm run build
+      # - name: Deploy To S3 Bucket
+      #   run: aws s3 sync --region ${{ env.REGION_NAME }} ./out s3://${{ env.BUCKET_NAME }} --delete

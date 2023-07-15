@@ -5,26 +5,20 @@ services:
     container_name: db
     build:
       context: .
-      dockerfile: containers/mysql/Dockerfile
-    # M1チップでも動くように
-    platform: linux/x86_64
-    # ローカルの/data/dbをコンテナの/var/lib/mysqlにマウンティング
+      dockerfile: containers/postgres/Dockerfile
     volumes:
-      - db_data:/var/lib/mysql
-    # 環境変数
-    environment:
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE
-      - MYSQL_USER
-      - MYSQL_PASSWORD
-    ports:
-      - "3306:3306"
+      - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD
+      test: pg_isready -U "${POSTGRES_USER:-postgres}" || exit 1
       interval: 10s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_NAME
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    ports:
+      - "5432:5432" # デバッグ用
 
   app:
     container_name: app

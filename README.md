@@ -16,7 +16,7 @@
   <img src="https://img.shields.io/badge/-Python-F2C63C.svg?logo=python&style=for-the-badge">
   <!-- ミドルウェア一覧 -->
   <img src="https://img.shields.io/badge/-Nginx-269539.svg?logo=nginx&style=for-the-badge">
-  <img src="https://img.shields.io/badge/-MySQL-4479A1.svg?logo=mysql&style=for-the-badge&logoColor=white">
+  <img src="https://img.shields.io/badge/-Postgresql-336791.svg?logo=postgresql&style=for-the-badge&logoColor=white">
   <img src="https://img.shields.io/badge/-Gunicorn-199848.svg?logo=gunicorn&style=for-the-badge&logoColor=white">
   <!-- インフラ一覧 -->
   <img src="https://img.shields.io/badge/-Docker-1488C6.svg?logo=docker&style=for-the-badge">
@@ -76,7 +76,7 @@ React、DRF、Terraform を勉強する際に使用できるテンプレート
 | Python                | 3.11.4     |
 | Django                | 4.2.1      |
 | Django Rest Framework | 3.14.0     |
-| MySQL                 | 8.0        |
+| Postgres              | 15.2       |
 | Node.js               | 16.17.0    |
 | React                 | 18.2.0     |
 | Next.js               | 13.4.6     |
@@ -115,7 +115,7 @@ React、DRF、Terraform を勉強する際に使用できるテンプレート
 ├── containers
 │   ├── django
 │   ├── front
-│   ├── mysql
+│   ├── postgres
 │   └── nginx
 ├── docker-compose.yml
 ├── frontend
@@ -152,12 +152,11 @@ React、DRF、Terraform を勉強する際に使用できるテンプレート
 .env ファイルを以下の環境変数例と[環境変数の一覧](#環境変数の一覧)を元に作成
 
 ```.env
-MYSQL_ROOT_PASSWORD=root
-MYSQL_DATABASE=django-db
-MYSQL_USER=django
-MYSQL_PASSWORD=django
-MYSQL_HOST=db
-MYSQL_PORT=3306
+POSTGRES_NAME=postgres
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
 SECRET_KEY=django
 DJANGO_SETTINGS_MODULE=project.settings.local
 ```
@@ -183,19 +182,18 @@ make down
 
 ### 環境変数の一覧
 
-| 変数名                 | 役割                                      | デフォルト値                       | DEV 環境での値                           |
-| ---------------------- | ----------------------------------------- | ---------------------------------- | ---------------------------------------- |
-| MYSQL_ROOT_PASSWORD    | MySQL のルートパスワード（Docker で使用） | root                               |                                          |
-| MYSQL_DATABASE         | MySQL のデータベース名（Docker で使用）   | django-db                          |                                          |
-| MYSQL_USER             | MySQL のユーザ名（Docker で使用）         | django                             |                                          |
-| MYSQL_PASSWORD         | MySQL のパスワード（Docker で使用）       | django                             |                                          |
-| MYSQL_HOST             | MySQL のホスト名（Docker で使用）         | db                                 |                                          |
-| MYSQL_PORT             | MySQL のポート番号（Docker で使用）       | 3306                               |                                          |
-| SECRET_KEY             | Django のシークレットキー                 | secretkey                          | 他者に推測されないランダムな値にすること |
-| ALLOWED_HOSTS          | リクエストを許可するホスト名              | localhost 127.0.0.1 [::1] back web | フロントのホスト名                       |
-| DEBUG                  | デバッグモードの切り替え                  | True                               | False                                    |
-| TRUSTED_ORIGINS        | CORS で許可するオリジン                   | http://localhost                   |                                          |
-| DJANGO_SETTINGS_MODULE | Django アプリケーションの設定モジュール   | project.settings.local             | project.settings.dev                     |
+| 変数名                 | 役割                                       | デフォルト値                       | DEV 環境での値                           |
+| ---------------------- | ------------------------------------------ | ---------------------------------- | ---------------------------------------- |
+| POSTGRES_NAME          | Postgres のデータベース名（Docker で使用） | postgres                           |                                          |
+| POSTGRES_USER          | Postgres のユーザ名（Docker で使用）       | postgres                           |                                          |
+| POSTGRES_PASSWORD      | Postgres のパスワード（Docker で使用）     | postgres                           |                                          |
+| POSTGRES_HOST          | Postgres のホスト名（Docker で使用）       | db                                 |                                          |
+| POSTGRES_PORT          | Postgres のポート番号（Docker で使用）     | 5432                               |                                          |
+| SECRET_KEY             | Django のシークレットキー                  | secretkey                          | 他者に推測されないランダムな値にすること |
+| ALLOWED_HOSTS          | リクエストを許可するホスト名               | localhost 127.0.0.1 [::1] back web | フロントのホスト名                       |
+| DEBUG                  | デバッグモードの切り替え                   | True                               | False                                    |
+| TRUSTED_ORIGINS        | CORS で許可するオリジン                    | http://localhost                   |                                          |
+| DJANGO_SETTINGS_MODULE | Django アプリケーションの設定モジュール    | project.settings.local             | project.settings.dev                     |
 
 ### コマンド一覧
 
