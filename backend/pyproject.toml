@@ -75,10 +75,8 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "-v -s --durations=0"
-
-[tool.pytest]
 DJANGO_SETTINGS_MODULE = "project.settings.local"
+addopts = "-vv --diff-width=60 -s --durations=0"
 
 # logの設定
 [logging]
