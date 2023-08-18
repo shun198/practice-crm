@@ -15,7 +15,7 @@ jobs:
     #     branch: ['develop', 'main']
     runs-on: ubuntu-20.04
     steps:
-      - name: Execute Branch Protection Rule API for develop
+      - name: Add env
         # if [ "${{ matrix.branch }}" == 'develop' ]
         # then
         #   REQUIRED_APPROVING_REVIEW_COUNT=1
@@ -25,6 +25,9 @@ jobs:
         run: |
           echo $GITHUB_REPOSITORY
           REPOS=$GITHUB_REPOSITORY
+          echo REPOS
+      - name: Execute API
+        run: |
           curl -L \
           -X PUT \
           -H "Accept: application/vnd.github+json" \
