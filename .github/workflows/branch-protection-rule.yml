@@ -19,7 +19,7 @@ jobs:
         if [ ${{ matrix.branch }} == 'develop' ]
         then
           REQUIRED_APPROVING_REVIEW_COUNT=1
-        elif [ ${{ matrix.branch }} == 'develop' ]
+        elif [ ${{ matrix.branch }} == 'main' ]
         then
           REQUIRED_APPROVING_REVIEW_COUNT=2
         run: |
