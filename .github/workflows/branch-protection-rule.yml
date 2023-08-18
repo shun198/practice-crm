@@ -2,7 +2,9 @@ name: Enable Branch Protection Rules
 # on:
 #   pull_request:
 #     types: [opened, reopened, synchronize, ready_for_review]
-on: create
+on:
+  repository:
+    types: created
 
 jobs:
   Setup:
