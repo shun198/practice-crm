@@ -28,7 +28,7 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer {{ secrets.BRANCH_PROTECTION_API_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/$GITHUB_REPOSITORY/branches/develop/protection \
+          https://api.github.com/repos/${{ env.GITHUB_REPOSITORY}}/branches/develop/protection \
           -d '{"required_status_checks":{"strict":false,"contexts":[]},"enforce_admins":null,"required_pull_request_reviews":{"dismiss_stale_reviews":false,"require_code_owner_reviews":false,"required_approving_review_count":1,"require_last_push_approval":false},"restrictions":null,"required_conversation_resolution":true}'
       - name: Execute Branch Protection Rule API for main
         run: |
@@ -37,5 +37,5 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer {{ secrets.BRANCH_PROTECTION_API_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/${GITHUB_REPOSITORY}/branches/main/protection \
+          https://api.github.com/repos/${{ env.GITHUB_REPOSITORY}}/branches/main/protection \
           -d '{"required_status_checks":{"strict":false,"contexts":[]},"enforce_admins":null,"required_pull_request_reviews":{"dismiss_stale_reviews":false,"require_code_owner_reviews":false,"required_approving_review_count":2,"require_last_push_approval":false},"restrictions":null,"required_conversation_resolution":true}'
