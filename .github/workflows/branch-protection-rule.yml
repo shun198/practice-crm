@@ -2,16 +2,10 @@ name: Enable Branch Protection Rules
 # on:
 #   pull_request:
 #     types: [opened, reopened, synchronize, ready_for_review]
-on:
-  repository:
-    types: created
+on: create
 
 jobs:
   Setup:
-    # if: |
-    #   github.event.pull_request.draft == false
-    #   && !startsWith(github.head_ref, 'release')
-    #   && !startsWith(github.head_ref, 'doc')
     name: Enable Branch Protection Rules
     # strategy:
     #   matrix:
