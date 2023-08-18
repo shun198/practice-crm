@@ -23,6 +23,7 @@ jobs:
         # then
         #   REQUIRED_APPROVING_REVIEW_COUNT=2
         run: |
+          echo ${GITHUB_REPOSITORY}
           curl -L \
           -X PUT \
           -H "Accept: application/vnd.github+json" \
@@ -32,6 +33,7 @@ jobs:
           -d '{"required_status_checks":{"strict":false,"contexts":[]},"enforce_admins":null,"required_pull_request_reviews":{"dismiss_stale_reviews":false,"require_code_owner_reviews":false,"required_approving_review_count":1,"require_last_push_approval":false},"restrictions":null,"required_conversation_resolution":true}'
       - name: Execute Branch Protection Rule API for main
         run: |
+          echo ${GITHUB_REPOSITORY}
           curl -L \
           -X PUT \
           -H "Accept: application/vnd.github+json" \
