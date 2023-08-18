@@ -1,15 +1,10 @@
 name: Enable Branch Protection Rules
-on:
-  pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+on: workflow_dispatch
 # on: create
 
 jobs:
   Setup:
     name: Enable Branch Protection Rules
-    # strategy:
-    #   matrix:
-    #     branch: ['develop', 'main']
     runs-on: ubuntu-20.04
     steps:
       # if [ "${{ matrix.branch }}" == 'develop' ]
