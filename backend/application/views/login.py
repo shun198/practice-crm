@@ -1,14 +1,15 @@
 from logging import getLogger
 
-from application.models.user import User
-from application.serializers.user import LoginSerializer, UserSerializer
-from application.utils.logs import LoggerName
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, JsonResponse
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet, ViewSet
+
+from application.models.user import User
+from application.serializers.user import LoginSerializer, UserSerializer
+from application.utils.logs import LoggerName
 
 
 class UserViewSet(ModelViewSet):
@@ -32,9 +33,7 @@ class LoginViewSet(ViewSet):
         user = authenticate(employee_number=employee_number, password=password)
         if not user:
             return JsonResponse(
-                data={
-                    "msg": "社員番号またはパスワードが間違っています"
-                },
+                data={"msg": "社員番号またはパスワードが間違っています"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         else:

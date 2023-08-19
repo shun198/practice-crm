@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
@@ -12,6 +12,7 @@ from application.permissions import (
     IsSuperUser,
 )
 from application.serializers.user import EmailSerializer, UserSerializer
+from application.utils.csv_wrapper import CSVResponseWrapper, CSVUserListData
 
 
 class UserViewSet(ModelViewSet):
@@ -43,11 +44,11 @@ class UserViewSet(ModelViewSet):
 
     # get_permissionsメソッドを使えば前述の表に従って権限を付与できる
     def get_permissions(self):
-        if self.action in [
+        if self.action in {
             "update",
             "partial_update",
             "send_invite_user_mail",
-        ]:
+        }:
             permission_classes = [IsManagementUser]
         elif self.action == "create":
             permission_classes = [IsGeneralUser]
@@ -58,3 +59,16 @@ class UserViewSet(ModelViewSet):
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+    @action(methods=["get"], detail=False)
+    def export(self, request):
+        """
+        CSV形式でユーザー一覧をエクスポートするAPI
+        Returns:
+            CSVファイル
+        """
+        csvWrapper = CSVResponseWrapper("user_data.csv")
+        csv_data = CSVUserListData(self.queryset)
+        csvWrapper.write_response(csv_data)
+
+        return csvWrapper.response
