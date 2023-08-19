@@ -79,6 +79,14 @@ paths:
                 type: object
               example:
                 role: "MANAGEMENT"
+        "400":
+          description: ログインに失敗
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                msg: "社員番号またはパスワードが間違っています"
 
   /api/logout/:
     post:
