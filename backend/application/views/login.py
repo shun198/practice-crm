@@ -43,6 +43,6 @@ class LoginViewSet(ViewSet):
 
     @action(methods=["POST"], detail=False)
     def logout(self, request):
-        """ログアウト"""
+        """ユーザのログアウト"""
         logout(request)
         return HttpResponse()

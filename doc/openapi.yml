@@ -6,10 +6,19 @@ info:
   title: project
   description: |-
     # プロジェクトの詳細
-
-  version: 1.0.11
+  version: 1.0.0
 servers:
   - url: http://localhost:8000/
+
+# basic認証の設定
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+security:
+  - basicAuth: [] 
 
 tags:
   - name: health
@@ -27,6 +36,8 @@ tags:
     externalDocs:
       description: ログアウトについて
       url: https://qiita.com/shun198/items/067e122bb291fed2c839
+  - name: users
+    description: システムユーザ関連のAPI
 
 paths:
   /api/health/:
@@ -118,5 +129,256 @@ paths:
             application/json:
               schema:
                 type: object
-              example: {}
           
+  /api/users/:
+    get:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: システムユーザを一覧表示する
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              properties:
+                id:
+                  type: string
+                  description: UUID
+                employee_number:
+                  type: string
+                  description: 社員番号
+                username:
+                  type: string
+                  description: ユーザ名
+                email:
+                  type: string
+                  description: メールアドレス
+                role:
+                  type: int
+                  description: ロール
+              examples:
+                user_example:
+                  value:
+                    - id: "00000000-0000-0000-0000-000000000001"
+                      employee_number: "00000001"
+                      username: "test01"
+                      email: "test01@example.com"
+                      role: 0
+                    - id: "00000000-0000-0000-0000-000000000002"
+                      employee_number: "00000002"
+                      username: "test02"
+                      email: "test02@example.com"
+                      role: 1
+                    - id: "00000000-0000-0000-0000-000000000003"
+                      employee_number: "00000003"
+                      username: "test03"
+                      email: "test03@example.com"
+                      role: 2
+                    - id: "00000000-0000-0000-0000-000000000004"
+                      employee_number: "00000004"
+                      username: "test04"
+                      email: "test04@example.com"
+                      role: 0
+    post:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: システムユーザを登録する
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000005"
+                username:
+                  type: string
+                  description: ユーザ名
+                  example: "test05"
+                email:
+                  type: string
+                  description: メールアドレス
+                  example: "test05@example.com"
+                role:
+                  type: int
+                  description: ユーザ名
+                  example: 0
+              required:
+                - "employee_number"
+                - "username"
+                - "email"
+                - "role"
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: "Random UUID"
+                employee_number: "00000005"
+                username: "test05"
+                email: "test05@example.com"
+                role: 0
+
+  /api/users/{id}/:
+    get:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: 該当するUUIDのシステムユーザを取得する
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: "00000000-0000-0000-0000-000000000001"
+                employee_number: "00000001"
+                username: "test01"
+                email: "test01@example.com"
+                role: 0
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 取得したいシステムユーザのUUID
+          schema:
+            type: string
+          example: "00000000-0000-0000-0000-000000000001"
+
+    put:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: 該当するUUIDのシステムユーザを更新する
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000005"
+                username:
+                  type: string
+                  description: ユーザ名
+                  example: "test05"
+                email:
+                  type: string
+                  description: メールアドレス
+                  example: "test05@example.com"
+                role:
+                  type: int
+                  description: ユーザ名
+                  example: 0
+              required:
+                - "employee_number"
+                - "username"
+                - "email"
+                - "role"
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: "00000000-0000-0000-0000-000000000004"
+                employee_number: "00000004"
+                username: "test04"
+                email: "test04@example.com"
+                role: 0
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 更新したいシステムユーザのUUID
+          schema:
+            type: string
+          example: "00000000-0000-0000-0000-000000000004"
+
+    patch:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: 該当するUUIDのシステムユーザを一部更新する
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000005"
+                username:
+                  type: string
+                  description: ユーザ名
+                  example: "test05"
+                email:
+                  type: string
+                  description: メールアドレス
+                  example: "test05@example.com"
+                role:
+                  type: int
+                  description: ユーザ名
+                  example: 0
+              required:
+                - "employee_number"
+                - "password"
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: "00000000-0000-0000-0000-000000000004"
+                employee_number: "00000004"
+                username: "test04"
+                email: "test04@example.com"
+                role: 0
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 一部更新したいシステムユーザのUUID
+          schema:
+            type: string
+          example: "00000000-0000-0000-0000-000000000004"
+
+    delete:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: 該当するUUIDのシステムユーザを削除する
+      responses:
+        '204':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 削除したいシステムユーザのUUID
+          schema:
+            type: string
+          example: "00000000-0000-0000-0000-000000000004"
