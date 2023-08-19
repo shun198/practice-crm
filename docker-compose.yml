@@ -82,7 +82,7 @@ services:
     ports:
       - '4566:4566'
     environment:
-      - SERVICES=sns
+      - SERVICES=sns,ses,sqs
       - AWS_ACCESS_KEY_ID=localstack
       - AWS_SECRET_ACCESS_KEY=localstack
       - DEBUG=1

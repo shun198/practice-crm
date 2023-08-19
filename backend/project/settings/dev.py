@@ -1,5 +1,7 @@
 """DEV環境用の設定"""
 
+from application.injectors import DevModule, injector
+
 from .base import *
 from .environment import aws_settings
 
@@ -20,3 +22,6 @@ DEFAULT_FROM_EMAIL = aws_settings.DEFAULT_FROM_EMAIL
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 STATICFILES_STORAGE = "storages.backends.s3boto3.S3StaticStorage"
 AWS_STORAGE_BUCKET_NAME = aws_settings.AWS_STORAGE_BUCKET_NAME
+
+# DI設定
+injector.binder.install(DevModule())

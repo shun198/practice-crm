@@ -17,7 +17,7 @@ class LocalModule(Module):
         sns_resource = SnsResource(
             boto3.resource(
                 "sns",
-                region_name=aws_settings.AWS_REGION_NAME,
+                region_name=aws_settings.AWS_DEFAULT_REGION_NAME,
                 endpoint_url=aws_settings.ENDPOINT_URL,
             )
         )
@@ -29,7 +29,7 @@ class DevModule(Module):
 
     def configure(self, binder: Binder) -> None:
         sns_resource = SnsResource(
-            boto3.resource("sns", region_name=aws_settings.AWS_REGION_NAME)
+            boto3.resource("sns", region_name=aws_settings.AWS_DEFAULT_REGION_NAME)
         )
         binder.bind(SnsResource, to=sns_resource)
 
