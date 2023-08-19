@@ -1,7 +1,7 @@
 # from application.injectors import injector
 from application.injectors.sns import sns_injector
-from application.serializers.sns import SnsSerializer
-from application.utils.sns import SnsWrapper
+from application.serializers.sms import SmsSerializer
+from application.utils.sms import SnsWrapper
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
@@ -9,10 +9,10 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 
-class SnsViewSet(ViewSet):
+class SmsViewSet(ViewSet):
     """SMS関連のViewSet"""
 
-    serializer_class = SnsSerializer
+    serializer_class = SmsSerializer
     permission_classes = [AllowAny]
 
     @action(methods=["post"], detail=False)
