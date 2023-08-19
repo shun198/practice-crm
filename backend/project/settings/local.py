@@ -1,5 +1,5 @@
 """LOCAL環境用の設定"""
-from application.injectors import LocalModule, injector
+from application.injectors import LocalSnsModule, injector
 
 from .base import *
 
@@ -36,4 +36,4 @@ EMAIL_PORT = 1025
 EMAIL_USE_TLS = False
 
 # DI設定
-injector.binder.install(LocalModule())
+injector.binder.install(LocalSnsModule())

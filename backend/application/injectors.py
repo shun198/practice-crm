@@ -10,7 +10,7 @@ class SnsWrapperModule(Module):
         binder.bind(SnsWrapper)
 
 
-class LocalModule(Module):
+class LocalSnsModule(Module):
     """Local環境用のモジュール"""
 
     def configure(self, binder: Binder) -> None:
@@ -24,7 +24,7 @@ class LocalModule(Module):
         binder.bind(SnsResource, to=sns_resource)
 
 
-class DevModule(Module):
+class DevSnsModule(Module):
     """Dev環境用のモジュール"""
 
     def configure(self, binder: Binder) -> None:

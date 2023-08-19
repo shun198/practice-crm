@@ -1,6 +1,6 @@
 """DEV環境用の設定"""
 
-from application.injectors import DevModule, injector
+from application.injectors import DevSnsModule, injector
 
 from .base import *
 from .environment import aws_settings
@@ -24,4 +24,4 @@ STATICFILES_STORAGE = "storages.backends.s3boto3.S3StaticStorage"
 AWS_STORAGE_BUCKET_NAME = aws_settings.AWS_STORAGE_BUCKET_NAME
 
 # DI設定
-injector.binder.install(DevModule())
+injector.binder.install(DevSnsModule())
