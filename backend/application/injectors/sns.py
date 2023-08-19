@@ -1,6 +1,6 @@
 """DI定義用のモジュール"""
 import boto3
-from application.utils.sms import SnsResource, SnsWrapper
+from application.utils.sns import SnsResource, SnsWrapper
 from injector import Binder, Injector, Module
 from project.settings.environment import aws_settings
 
@@ -34,4 +34,4 @@ class DevSnsModule(Module):
         binder.bind(SnsResource, to=sns_resource)
 
 
-injector = Injector([SnsWrapperModule()])
+sns_injector = Injector([SnsWrapperModule()])
