@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   db:
@@ -18,7 +18,7 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     ports:
-      - "5432:5432" # デバッグ用
+      - '5432:5432' # デバッグ用
 
   app:
     container_name: app
@@ -29,9 +29,9 @@ services:
       - ./backend:/code
       - ./static:/static
     ports:
-      - "8000:8000"
+      - '8000:8000'
       # デバッグ用ポート
-      - "8080:8080"
+      - '8080:8080'
     command: sh -c "/usr/local/bin/entrypoint.sh"
     stdin_open: true
     tty: true
@@ -45,8 +45,8 @@ services:
     container_name: mail
     image: schickling/mailcatcher
     ports:
-      - "1080:1080"
-      - "1025:1025"
+      - '1080:1080'
+      - '1025:1025'
 
   nginx:
     container_name: web
@@ -70,8 +70,8 @@ services:
       - node_modules_volume:/frontend/node_modules
     command: sh -c "npm run dev"
     ports:
-      - "3000:3000"
-      - "3030:3030"
+      - '3000:3000'
+      - '3030:3030'
     environment:
       - CHOKIDAR_USEPOLLING=true
       - NEXT_PUBLIC_RESTAPI_URL=http://localhost/back
@@ -80,7 +80,7 @@ services:
     image: localstack/localstack
     container_name: localstack
     ports:
-      - "4566:4566"
+      - '4566:4566'
     environment:
       - SERVICES=sns
       - AWS_ACCESS_KEY_ID=localstack
@@ -89,6 +89,16 @@ services:
     volumes:
       - localstack_data:/tmp/localstack/data
       - localstack_bin:/var/lib/localstack
+
+  doc:
+    image: swaggerapi/swagger-ui
+    container_name: doc
+    volumes:
+      - ./doc/openapi.yml:/usr/share/nginx/html/openapi.yml
+    environment:
+      API_URL: openapi.yml
+    ports:
+      - 9000:8080
 
 volumes:
   db_data:

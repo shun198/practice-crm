@@ -1,0 +1,114 @@
+# https://swagger.io/specification/
+# openapiのversion
+openapi: 3.1.0
+# APIに関するメタデータ
+info:
+  title: project
+  description: |-
+    # プロジェクトの詳細
+
+  version: 1.0.11
+servers:
+  - url: http://localhost:8000/
+
+tags:
+  - name: health
+    description: ヘルスチェックAPI
+    externalDocs:
+      description: ヘルスチェックについて
+      url: https://qiita.com/shun198/items/be6be8453723d0887ba4
+  - name: login
+    description: ログインAPI
+    externalDocs:
+      description: ログインについて
+      url: https://qiita.com/shun198/items/067e122bb291fed2c839
+  - name: logout
+    description: ログアウトAPI
+    externalDocs:
+      description: ログアウトについて
+      url: https://qiita.com/shun198/items/067e122bb291fed2c839
+
+paths:
+  /api/health/:
+    get:
+      tags:
+        - health
+      summary: ヘルスチェックAPI
+      description: APIサーバー単独でのヘルスチェック
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: ステータス
+                    example: pass
+  /api/login/:
+    post:
+      tags:
+        - login
+      summary: ログインAPI
+      description: アプリケーションにログインする
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000001"
+                password:
+                  type: string
+                  description: パスワード
+                  example: "test"
+              required:
+                - "employee_number"
+                - "password"
+      responses:
+        "200":
+          description: ログインに成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                role: "MANAGEMENT"
+
+  /api/logout/:
+    post:
+      tags:
+        - logout
+      summary: ログアウトAPI
+      description: アプリケーションにログアウトする
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000001"
+                password:
+                  type: string
+                  description: パスワード
+                  example: "test"
+              required:
+                - "employee_number"
+                - "password"
+      responses:
+        "200":
+          description: ログアウトに成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+          

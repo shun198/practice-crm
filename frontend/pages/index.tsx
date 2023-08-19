@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Link from "next/link";
 import { useLogin } from '../features/users/useLogin';
 
 const Login = () => {
   const { logIn, isErrorFlag } = useLogin();
+  const submitHandler = (event) => {
+    event.preventDefault();
+  };
+
+  const inputHandler = (input, value) => {
+    console.log(input);
+    console.log(value);
+  };
 
   return (
     <>
       <h1>Login</h1>
       <div>
         <h1>ログイン画面</h1>
-        {isErrorFlag && <p className="text-[#d32f2f]">パスワードか社員番号が間違っています</p>}
-        <form method="post">
+        {isErrorFlag && <p>パスワードか社員番号が間違っています</p>}
+        <form
+          onSubmit={submitHandler}
+        >
           <input type="text" id="employee_number" name="name" placeholder='社員番号'></input>
           <br/>
           <input type="text" id="password" name="name" placeholder='パスワード'></input>

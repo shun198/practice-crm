@@ -13,7 +13,7 @@ class DjangoSettings(BaseSettings):
     POSTGRES_PASSWORD: str = "postgres"
     POSTGRES_HOST: str = "db"
     POSTGRES_PORT: int = 5432
-    TRUSTED_ORIGINS: str = "http://localhost"
+    TRUSTED_ORIGINS: str = "http://localhost http://localhost:9000"
 
 
 class AwsSettings(BaseSettings):
