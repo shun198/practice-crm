@@ -1,6 +1,7 @@
 """AWS関連のモジュール"""
 from logging import Logger, getLogger
 
+from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 from injector import inject
 
@@ -13,19 +14,19 @@ emergency_logger: Logger = getLogger(LoggerName.EMERGENCY.value)
 class SesResource:
     """SesのResource用のクラス"""
 
-    def __init__(self, ses_resource):
-        self.ses_resource = ses_resource
+    def __init__(self, ses_client: BaseClient):
+        self.ses_client = ses_client
 
 
 class SesWrapper:
     """Encapsulates Amazon SES topic and subscription functions."""
 
     @inject
-    def __init__(self, sns_resource: SesResource):
+    def __init__(self, ses_client: SesResource):
         """
         :param sns_resource: A Boto3 Amazon SNS resource.
         """
-        self.sns_resource = sns_resource.sns_resource
+        self.ses_client = ses_client
 
     def send_email(
         self,
@@ -45,7 +46,7 @@ class SesWrapper:
             charset(str): 文字コード
         """
         try:
-            response = self.client.send_email(
+            response = self.ses_client.send_email(
                 Destination={
                     "ToAddresses": [
                         to_addresses,
