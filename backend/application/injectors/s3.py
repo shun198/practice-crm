@@ -12,28 +12,28 @@ class S3BucketWrapperModule(Module):
         binder.bind(S3BucketWrapper)
 
 
-class LocalSesModule(Module):
+class LocalS3Module(Module):
     """Local環境用のモジュール"""
 
     def configure(self, binder: Binder) -> None:
-        ses_resource = S3BucketResource(
+        s3_resource = S3BucketResource(
             boto3.resource(
                 "s3", region_name=aws_settings.AWS_DEFAULT_REGION_NAME
             )
         )
-        binder.bind(S3BucketResource, to=ses_resource)
+        binder.bind(S3BucketResource, to=s3_resource)
 
 
-class DevSesModule(Module):
+class DevS3Module(Module):
     """Dev環境用のモジュール"""
 
     def configure(self, binder: Binder) -> None:
-        ses_resource = S3BucketResource(
+        s3_resource = S3BucketResource(
             boto3.resource(
                 "s3", region_name=aws_settings.AWS_DEFAULT_REGION_NAME
             )
         )
-        binder.bind(S3BucketResource, to=ses_resource)
+        binder.bind(S3BucketResource, to=s3_resource)
 
 
 s3_injector = Injector([S3BucketWrapperModule()])
