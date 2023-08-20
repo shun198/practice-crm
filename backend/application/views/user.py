@@ -1,3 +1,8 @@
+from django.http import HttpResponse
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
+
 from application.emails import send_welcome_email
 from application.models.user import User
 from application.permissions import (
@@ -8,10 +13,6 @@ from application.permissions import (
 )
 from application.serializers.user import EmailSerializer, UserSerializer
 from application.utils.csv_wrapper import CSVResponseWrapper, CSVUserListData
-from django.http import HttpResponse
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
 
 
 class UserViewSet(ModelViewSet):

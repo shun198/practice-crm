@@ -1,18 +1,31 @@
 """AWS関連のモジュール"""
-from logging import getLogger
+from logging import Logger, getLogger
 
-from application.utils.logs import LoggerName
-from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 from injector import inject
 
+from application.utils.logs import LoggerName
 
-class SESWrapper:
-    """AWS SESのラッパークラス"""
+application_logger: Logger = getLogger(LoggerName.APPLICATION.value)
+emergency_logger: Logger = getLogger(LoggerName.EMERGENCY.value)
+
+
+class SesResource:
+    """SesのResource用のクラス"""
+
+    def __init__(self, ses_resource):
+        self.ses_resource = ses_resource
+
+
+class SesWrapper:
+    """Encapsulates Amazon SES topic and subscription functions."""
 
     @inject
-    def __init__(self, client: BaseClient):
-        self.client = client
+    def __init__(self, sns_resource: SesResource):
+        """
+        :param sns_resource: A Boto3 Amazon SNS resource.
+        """
+        self.sns_resource = sns_resource.sns_resource
 
     def send_email(
         self,
@@ -54,7 +67,7 @@ class SESWrapper:
             )
         except ClientError as error:
             message = error.response["Error"]["Message"]
-            getLogger(LoggerName.EMERGENCY.value).error(message)
+            emergency_logger.exception(message)
         else:
             message = "Email sent! Message ID:", response["MessageId"]
-            getLogger(LoggerName.APPLICATION.value).info(message)
+            emergency_logger.exception(message)

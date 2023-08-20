@@ -2,8 +2,9 @@
 
 import csv
 
-from application.models import User
 from django.http import HttpResponse
+
+from application.models import User
 
 
 class CSVUserListData:

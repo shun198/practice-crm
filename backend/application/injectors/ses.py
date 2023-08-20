@@ -1,42 +1,41 @@
 """DI定義用のモジュール"""
 import boto3
-from application.utils.ses import SESWrapper
-from botocore.client import BaseClient
 from injector import Binder, Injector, Module
+
+from application.utils.ses import SesResource, SesWrapper
 from project.settings.environment import aws_settings
 
 
-class SESWrappereModule(Module):
-    """SESWrapper用のモジュール"""
+class SesWrapperModule(Module):
+    """SesWrapper用のモジュール"""
 
     def configure(self, binder: Binder) -> None:
-        binder.bind(SESWrapper)
-        return super().configure(binder)
+        binder.bind(SesWrapper)
 
 
-class LocalModule(Module):
-    """ローカル環境用のモジュール"""
+class LocalSesModule(Module):
+    """Local環境用のモジュール"""
 
     def configure(self, binder: Binder) -> None:
-        client = boto3.client(
-            "ses",
-            region_name=aws_settings.AWS_DEFAULT_REGION_NAME,
-            endpoint_url=aws_settings.ENDPOINT_URL,
+        ses_resource = SesResource(
+            boto3.resource(
+                "sns", region_name=aws_settings.AWS_DEFAULT_REGION_NAME
+            )
         )
-        client.verify_email_identity(EmailAddress=aws_settings.SENDER)
-        binder.bind(BaseClient, to=client)
-        return super().configure(binder)
+        binder.bind(SesResource, to=ses_resource)
 
 
-class PrdModule(Module):
-    """本番環境用のモジュール"""
+class DevSesModule(Module):
+    """Dev環境用のモジュール"""
 
     def configure(self, binder: Binder) -> None:
-        binder.bind(
-            BaseClient, to=boto3.client("ses", region_name=aws_settings.AWS_DEFAULT_REGION_NAME)
+        ses_resource = SesResource(
+            boto3.resource(
+                "sns", region_name=aws_settings.AWS_DEFAULT_REGION_NAME
+            )
         )
-        return super().configure(binder)
+        binder.bind(SesResource, to=ses_resource)
 
 
-injector = Injector([SESWrappereModule()])
+ses_injector = Injector([SesWrapperModule()])
 """DI用のコンテナ"""
