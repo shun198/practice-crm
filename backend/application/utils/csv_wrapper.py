@@ -2,9 +2,8 @@
 
 import csv
 
-from django.http import HttpResponse
-
 from application.models import User
+from django.http import HttpResponse
 
 
 class CSVUserListData:
@@ -18,10 +17,6 @@ class CSVUserListData:
             "権限",
         ]
         self.rows = self._create_rows(users)
-
-    def _create_rows(self, users: list[User]):
-        """列を生成"""
-        date_format = "%Y-%m-%d %H:%M:%S"
 
         rows = []
         for user in users:

@@ -22,6 +22,7 @@ class AwsSettings(BaseSettings):
     ENDPOINT_URL: str = "http://localstack:4566"
     AWS_DEFAULT_REGION_NAME: str = "ap-northeast-1"
     AWS_STORAGE_BUCKET_NAME: str = "localstack"
+    SENDER: str = "example.co.jp"
 
 
 django_settings = DjangoSettings()
