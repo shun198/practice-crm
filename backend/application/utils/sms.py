@@ -1,18 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf_8 -*-
-"""SMS用ライブラリ
-
-# 参考
-
-- https://docs.aws.amazon.com/ja_jp/code-library/latest/ug/python_3_sns_code_examples.html
-"""
-
 from logging import Logger, getLogger
 
+from application.utils.logs import LoggerName
 from botocore.exceptions import ClientError
 from injector import inject
-
-from application.utils.logs import LoggerName
 
 application_logger: Logger = getLogger(LoggerName.APPLICATION.value)
 emergency_logger: Logger = getLogger(LoggerName.EMERGENCY.value)
@@ -28,6 +18,7 @@ class SnsResource:
 class SnsWrapper:
     """Encapsulates Amazon SNS topic and subscription functions."""
 
+    # オブジェクト注入する際に@injectデコレータを使用
     @inject
     def __init__(self, sns_resource: SnsResource):
         """
