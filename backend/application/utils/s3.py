@@ -1,10 +1,11 @@
 from logging import Logger, getLogger
 
-from application.utils.logs import LoggerName
 from botocore.exceptions import ClientError
 from injector import inject
-from project.settings.environment import aws_settings
 from storages.backends.s3boto3 import S3Boto3Storage
+
+from application.utils.logs import LoggerName
+from project.settings.environment import aws_settings
 
 application_logger: Logger = getLogger(LoggerName.APPLICATION.value)
 emergency_logger: Logger = getLogger(LoggerName.EMERGENCY.value)

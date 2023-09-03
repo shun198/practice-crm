@@ -38,6 +38,8 @@ tags:
       url: https://qiita.com/shun198/items/067e122bb291fed2c839
   - name: users
     description: システムユーザ関連のAPI
+  - name: product
+    description: 商品関連のAPI
 
 paths:
   /api/health/:
@@ -382,3 +384,45 @@ paths:
           schema:
             type: string
           example: "00000000-0000-0000-0000-000000000004"
+
+  /api/product/:
+    get:
+      tags:
+        - product
+      summary: 商品のAPI
+      description: 商品を一覧表示する
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              properties:
+                id:
+                  type: string
+                  description: UUID
+                name:
+                  type: string
+                  description: 商品名
+                details:
+                  type: string
+                  description: 商品の詳細
+                price:
+                  type: int
+                  description: 商品の金額
+                created_at:
+                  type: datetime
+                  description: 作成日
+                updated_at:
+                  type: datetime
+                  description: 更新日
+              examples:
+                product_example:
+                  value:
+                    - id: "00000000-0000-0000-0000-000000000001"
+                      name: "枕"
+                      details: "快眠できる"
+                      price: 10000
+                      created_at: "2022-07-28T00:31:09.732Z"
+                      updated_at: "2022-07-28T00:31:09.732Z"

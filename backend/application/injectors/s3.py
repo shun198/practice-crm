@@ -1,7 +1,8 @@
 """DI定義用のモジュール"""
 import boto3
-from application.utils.s3 import S3BucketResource, S3BucketWrapper
 from injector import Binder, Injector, Module
+
+from application.utils.s3 import S3BucketResource, S3BucketWrapper
 from project.settings.environment import aws_settings
 
 

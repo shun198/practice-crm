@@ -1,8 +1,9 @@
 """DI定義用のモジュール"""
 import boto3
-from application.utils.ses import SesResource, SesWrapper
 from botocore.client import BaseClient
 from injector import Binder, Injector, Module
+
+from application.utils.ses import SesResource, SesWrapper
 from project.settings.environment import aws_settings
 
 

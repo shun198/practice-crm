@@ -30,7 +30,7 @@ class LoggingMiddleware:
         user = request.user
         user_info = "未ログイン"
         if user.is_authenticated:
-            user_info = f"{user.employee_number} {user.name}"
+            user_info = f"{user.employee_number} {user.username}"
 
         start_time = datetime.datetime.now()
         response = self.get_response(request)
@@ -42,9 +42,6 @@ class LoggingMiddleware:
             application_logger.info(message)
         elif status.is_client_error(response.status_code):
             application_logger.warning(message)
-        elif status.is_server_error(response.status_code):
-            error_msg = response.content.decode().split("Request")[0]
-            emergency_logger.error(f"{message}\n{error_msg}")
         else:
             application_logger.warning(message)
         return response
