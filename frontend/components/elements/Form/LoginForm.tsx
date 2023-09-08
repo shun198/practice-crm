@@ -9,6 +9,7 @@ function LoginForm() {
     // デフォルトでは、ブラウザはフォームデータを現在の URL に送信し、ページを更新します
     // e.preventDefault() を呼び出すことで、その振る舞いをオーバーライドできます
     e.preventDefault();
+    // 次の課題としてここにFetchAPIでログイン機能を実装したい
     console.log({
       employeeNumber,
       password

@@ -156,3 +156,27 @@ CORS_PREFLIGHT_MAX_AGE = 60 * 30
 
 # ログ設定
 dictConfig(ConfFile.get()["logging"])
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
+        },
+    },
+    "handlers": {
+        "slack": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "application.utils.logs.SlackHandler",
+        }
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["slack"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}

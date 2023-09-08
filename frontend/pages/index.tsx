@@ -3,9 +3,6 @@ import Link from "next/link";
 import LoginForm from '../components/elements/Form/LoginForm';
 
 const Login = () => {
-  const submitHandler = (event) => {
-    event.preventDefault();
-  };
 
   return (
     <>

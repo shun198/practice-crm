@@ -1,12 +1,10 @@
 import datetime
 from logging import getLogger
 
+from application.utils.logs import LoggerName
 from rest_framework import status
 
-from application.utils.logs import LoggerName
-
 application_logger = getLogger(LoggerName.APPLICATION.value)
-emergency_logger = getLogger(LoggerName.EMERGENCY.value)
 
 
 class LoggingMiddleware:
@@ -40,8 +38,6 @@ class LoggingMiddleware:
         message = f"{ip} {user_info} {method} {path} 実行時間: {duration_time} {status_code} "
         if status.is_success(response.status_code):
             application_logger.info(message)
-        elif status.is_client_error(response.status_code):
-            application_logger.warning(message)
         else:
             application_logger.warning(message)
         return response

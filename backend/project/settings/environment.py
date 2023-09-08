@@ -14,6 +14,7 @@ class DjangoSettings(BaseSettings):
     POSTGRES_HOST: str = "db"
     POSTGRES_PORT: int = 5432
     TRUSTED_ORIGINS: str = "http://localhost http://localhost:9000"
+    SLACK_ENDPOINT_URL: str = "http://test"
 
 
 class AwsSettings(BaseSettings):
@@ -23,6 +24,7 @@ class AwsSettings(BaseSettings):
     AWS_DEFAULT_REGION_NAME: str = "ap-northeast-1"
     AWS_STORAGE_BUCKET_NAME: str = "localstack"
     SENDER: str = "example.co.jp"
+    DEFAULT_FROM_EMAIL: str = "example.co.jp"
 
 
 django_settings = DjangoSettings()
