@@ -1,8 +1,7 @@
 """DI定義用のモジュール"""
 import boto3
-from injector import Binder, Injector, Module
-
 from application.utils.s3 import S3BucketResource, S3BucketWrapper
+from injector import Binder, Injector, Module
 from project.settings.environment import aws_settings
 
 
@@ -11,6 +10,7 @@ class S3BucketWrapperModule(Module):
 
     def configure(self, binder: Binder) -> None:
         binder.bind(S3BucketWrapper)
+        return super().configure(binder)
 
 
 class LocalS3Module(Module):
@@ -18,8 +18,8 @@ class LocalS3Module(Module):
 
     def configure(self, binder: Binder) -> None:
         s3_resource = S3BucketResource(
-            boto3.resource(
-                "s3", region_name=aws_settings.AWS_DEFAULT_REGION_NAME
+            boto3.client(
+                "s3", region_name=aws_settings.AWS_DEFAULT_REGION_NAME,endpoint_url=aws_settings.ENDPOINT_URL,
             )
         )
         binder.bind(S3BucketResource, to=s3_resource)
@@ -30,7 +30,7 @@ class DevS3Module(Module):
 
     def configure(self, binder: Binder) -> None:
         s3_resource = S3BucketResource(
-            boto3.resource(
+            boto3.client(
                 "s3", region_name=aws_settings.AWS_DEFAULT_REGION_NAME
             )
         )

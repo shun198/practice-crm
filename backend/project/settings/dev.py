@@ -27,5 +27,5 @@ AWS_STORAGE_BUCKET_NAME = aws_settings.AWS_STORAGE_BUCKET_NAME
 
 # DI設定
 sns_injector.binder.install(DevSnsModule())
-s3_injector.binder.install(DevS3Module())
+# s3_injector.binder.install(DevS3Module())
 ses_injector.binder.install(DevSesModule())
