@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from "next/link";
 import LoginForm from '../components/elements/Form/LoginForm';
+import LoginReactHookForm from '../components/elements/Form/LoginReactHookForm'
 
 const Login = () => {
 
@@ -8,6 +9,7 @@ const Login = () => {
     <>
       <div>
         <LoginForm/>
+        <LoginReactHookForm/>
         <Link href="/users"><h1>システムユーザ一覧</h1></Link>
       </div>
     </>
