@@ -8,6 +8,7 @@ from project.settings.environment import aws_settings
 
 class SnsWrapperModule(Module):
     def configure(self, binder):
+
         binder.bind(SnsWrapper)
 
 

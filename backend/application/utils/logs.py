@@ -1,11 +1,12 @@
 import json
+import tomllib
 from enum import Enum
 from logging import getLogger
 from typing import Any, Optional
 
 import requests
-import tomllib
 from django.utils.log import AdminEmailHandler
+
 from project.settings.environment import django_settings
 
 

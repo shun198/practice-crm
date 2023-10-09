@@ -1,8 +1,9 @@
 """DI定義用のモジュール"""
 import boto3
-from application.utils.ses import SesResource, SesWrapper
 from botocore.client import BaseClient
 from injector import Binder, Injector, Module
+
+from application.utils.ses import SesResource, SesWrapper
 from project.settings.environment import aws_settings
 
 
@@ -34,7 +35,9 @@ class DevSesModule(Module):
     def configure(self, binder: Binder) -> None:
         ses_resource = SesResource(
             boto3.client(
-                BaseClient, "ses", region_name=aws_settings.AWS_DEFAULT_REGION_NAME
+                BaseClient,
+                "ses",
+                region_name=aws_settings.AWS_DEFAULT_REGION_NAME,
             )
         )
         binder.bind(SesResource, to=ses_resource)

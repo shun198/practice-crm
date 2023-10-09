@@ -1,8 +1,9 @@
 import datetime
 from logging import getLogger
 
-from application.utils.logs import LoggerName
 from rest_framework import status
+
+from application.utils.logs import LoggerName
 
 application_logger = getLogger(LoggerName.APPLICATION.value)
 

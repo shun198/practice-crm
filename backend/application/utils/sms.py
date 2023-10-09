@@ -9,6 +9,7 @@ application_logger: Logger = getLogger(LoggerName.APPLICATION.value)
 emergency_logger: Logger = getLogger(LoggerName.EMERGENCY.value)
 
 
+# https://docs.aws.amazon.com/ja_jp/sns/latest/dg/example_sns_PublishTextSMS_section.html
 class SnsResource:
     """SNSのResource用のクラス"""
 

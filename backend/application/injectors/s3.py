@@ -1,10 +1,12 @@
 """DI定義用のモジュール"""
 import boto3
-from application.utils.s3 import S3BucketResource, S3BucketWrapper
 from injector import Binder, Injector, Module
+
+from application.utils.s3 import S3BucketResource, S3BucketWrapper
 from project.settings.environment import aws_settings
 
 
+# https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/example_s3_CreateBucket_section.html
 class S3BucketWrapperModule(Module):
     """S3BucketのWrapper用のモジュール"""
 
@@ -19,7 +21,9 @@ class LocalS3Module(Module):
     def configure(self, binder: Binder) -> None:
         s3_resource = S3BucketResource(
             boto3.client(
-                "s3", region_name=aws_settings.AWS_DEFAULT_REGION_NAME,endpoint_url=aws_settings.ENDPOINT_URL,
+                "s3",
+                region_name=aws_settings.AWS_DEFAULT_REGION_NAME,
+                endpoint_url=aws_settings.ENDPOINT_URL,
             )
         )
         binder.bind(S3BucketResource, to=s3_resource)

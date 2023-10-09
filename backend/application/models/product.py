@@ -30,7 +30,6 @@ class Product(models.Model):
         db_comment="更新日",
     )
 
-
     class Meta:
         db_table = "Product"
         db_table_comment = "商品"

@@ -11,6 +11,7 @@ application_logger: Logger = getLogger(LoggerName.APPLICATION.value)
 emergency_logger: Logger = getLogger(LoggerName.EMERGENCY.value)
 
 
+# https://docs.aws.amazon.com/ses/latest/dg/example_ses_SendEmail_section.html
 class SesResource:
     """SesのResource用のクラス"""
 

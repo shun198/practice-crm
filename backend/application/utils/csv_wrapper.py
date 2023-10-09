@@ -2,9 +2,8 @@
 
 import csv
 
-from django.http import HttpResponse
-
 from application.models import User
+from django.http import HttpResponse
 
 
 class CSVUserListData:
@@ -19,11 +18,13 @@ class CSVUserListData:
         ]
         self.rows = self._create_rows(users)
 
+    def _create_rows(self, users: list[User]):
+        """列を生成"""
         rows = []
         for user in users:
             rows.append(
                 [
-                    f'"{user.employee_number}"',
+                    user.employee_number,
                     user.username,
                     user.employee_number,
                     user.role,

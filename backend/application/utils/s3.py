@@ -1,10 +1,11 @@
 from logging import Logger, getLogger
 
-from application.utils.logs import LoggerName
 from botocore.exceptions import ClientError
 from injector import inject
-from project.settings.environment import aws_settings
 from storages.backends.s3boto3 import S3Boto3Storage
+
+from application.utils.logs import LoggerName
+from project.settings.environment import aws_settings
 
 application_logger: Logger = getLogger(LoggerName.APPLICATION.value)
 emergency_logger: Logger = getLogger(LoggerName.EMERGENCY.value)
@@ -13,22 +14,28 @@ emergency_logger: Logger = getLogger(LoggerName.EMERGENCY.value)
 class S3BucketResource:
     """S3のResource用のクラス"""
 
-    def __init__(self, s3_object):
-        self.object = s3_object
-        self.key = self.object.key
+    """Encapsulates S3 bucket actions."""
+
+    def __init__(self, bucket):
+        """
+        :param bucket: A Boto3 Bucket resource. This is a high-level resource in Boto3
+                       that wraps bucket actions in a class-like structure.
+        """
+        self.bucket = bucket
+        self.name = self.bucket.name
 
 
 class S3BucketWrapper:
     """Encapsulates S3 bucket actions."""
 
     @inject
-    def __init__(self, s3_object):
+    def __init__(self, bucket):
         """
-        :param s3_object: A Boto3 Object resource. This is a high-level resource in Boto3
-                          that wraps object actions in a class-like structure.
+        :param bucket: A Boto3 Bucket resource. This is a high-level resource in Boto3
+                       that wraps bucket actions in a class-like structure.
         """
-        self.object = s3_object
-        self.key = self.object.key
+        self.bucket = bucket
+        self.name = self.bucket.name
 
     def create(self, region_override=None):
         """
