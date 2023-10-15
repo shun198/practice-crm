@@ -41,3 +41,5 @@ EMAIL_USE_TLS = False
 sns_injector.binder.install(LocalSnsModule())
 # s3_injector.binder.install(LocalS3Module())
 ses_injector.binder.install(LocalSesModule())
+
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]

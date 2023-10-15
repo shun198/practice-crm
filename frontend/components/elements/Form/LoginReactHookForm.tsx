@@ -1,18 +1,50 @@
 import { useForm } from 'react-hook-form';
+import Cookies from 'js-cookie';
+import router from 'next/router';
 
 function LoginReactHookForm() {
+
+  type FormData = {
+    email: string;
+    password: string;
+  };
+
   const { 
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     // ログインボタンを押した時のみバリデーションを行う
     reValidateMode: 'onSubmit',
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
-  }
+  const onSubmit = async (data) => {
+    const csrftoken = Cookies.get('csrftoken') || '';
+    // ログイン情報をサーバーに送信
+    const response = await fetch('http://localhost/back/api/login/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+      // ユーザー名（社員番号）とパスワードをJSON形式で送信
+      body: JSON.stringify(data), 
+    });
+
+    if (response.ok) {
+      // ログイン成功
+      console.log('ログイン成功');
+      router.push('/products');
+      // リダイレクトなど、ログイン後の処理を追加
+    } else {
+      // ログイン失敗
+      response.json()
+      .then(data => {
+        const msg = data.msg;
+        alert(msg)
+      })
+    }
+  };
 
   return (
     <div className="Login">
@@ -47,10 +79,10 @@ function LoginReactHookForm() {
                 value: true,
                 message: 'パスワードを入力してください'
               },
-              pattern: {
-                value: /^(?=.*[a-zA-Z])(?=.*\d).{8,32}$/,
-                message: '8文字以上、32文字以下の少なくとも1つ以上の半角英字と数字をもつパスワードを入力してください。',
-              },
+              // pattern: {
+              //   value: /^(?=.*[a-zA-Z])(?=.*\d).{8,32}$/,
+              //   message: '8文字以上、32文字以下の少なくとも1つ以上の半角英字と数字をもつパスワードを入力してください。',
+              // },
             })}
           />
             {errors.password?.message && <div>{errors.password.message}</div>}
