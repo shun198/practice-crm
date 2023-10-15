@@ -5,10 +5,11 @@ import router from 'next/router';
 function ProductList() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(true); // ログイン状態を管理
 
   useEffect(() => {
     // データを取得するためのAPIのURLを指定
-    const apiUrl = 'http://localhost/back/api/product/'; // 実際のAPIエンドポイントに置き換えてください
+    const apiUrl = process.env.NEXT_PUBLIC_RESTAPI_URL + '/api/product/';
     const csrftoken = Cookies.get('csrftoken') || '';
     const credentials = 'include';
 
@@ -22,18 +23,18 @@ function ProductList() {
     .then((response) => {
       if (response.ok) {
         // ステータスコードが200の場合、JSONデータを取得
+        console.log(response)
+        console.log(loggedIn)
+        setLoggedIn(true);
+        console.log(loggedIn)
         return response.json();
-      } else if (response.status === 400) {
-        // ステータスコードが400の場合、クライアントエラー
-        throw new Error('クライアントエラー');
       } else if (response.status === 403) {
-        // ステータスコードが403の場合、アクセス拒否
-        router.push('/');
-      } else if (response.status === 404) {
-        router.push('/404');
+        console.log(response)
+        setLoggedIn(false); // ログインしていない状態をセット
       } else {
-        // その他のステータスコードに対するエラーハンドリング
-        throw new Error('その他エラー');
+        console.log(response)
+        console.log(process.env.NEXT_PUBLIC_BACK_)
+        alert("エラーが発生しました")
       }
     })
     .then((data) => {
@@ -45,9 +46,16 @@ function ProductList() {
     });
 }, []);
 
+  useEffect(() => {
+    if (!loggedIn) {
+    router.push('/'); // ログインしていない場合にルートページにリダイレクト
+    }
+  }, [loggedIn]);
+
   if (loading) {
     return <p>Loading...</p>;
   }
+
 
   return (
     <div className="App">
@@ -63,13 +71,21 @@ function ProductList() {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>{item.details}</td>
-              <td>{item.price}</td>
+        {data && data.length > 0 ? (
+            // data 配列が空でない場合のみマップ処理を行う
+            data.map((item) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.details}</td>
+                <td>{item.price}</td>
+              </tr>
+            ))
+          ) : (
+            // data 配列が空または未定義の場合の代替コンテンツ
+            <tr>
+              <td>Loading...</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

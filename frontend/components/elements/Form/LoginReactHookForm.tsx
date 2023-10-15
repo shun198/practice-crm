@@ -19,9 +19,10 @@ function LoginReactHookForm() {
   });
 
   const onSubmit = async (data) => {
+    const apiUrl = process.env.NEXT_PUBLIC_RESTAPI_URL + '/api/login/';
     const csrftoken = Cookies.get('csrftoken') || '';
     // ログイン情報をサーバーに送信
-    const response = await fetch('http://localhost/back/api/login/', {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ function LoginReactHookForm() {
     if (response.ok) {
       // ログイン成功
       console.log('ログイン成功');
-      router.push('/products');
+      router.push('/login_success');
       // リダイレクトなど、ログイン後の処理を追加
     } else {
       // ログイン失敗
