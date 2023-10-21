@@ -25,7 +25,7 @@ def send_welcome_email(email, name, url):
     )
 
     msg = EmailMultiAlternatives(
-        subject="IDLink登録中メールアドレスのお知らせ",
+        subject="アカウント登録のお知らせ",
         body=plaintext,
         from_email=None,
         to=[email],
