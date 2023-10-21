@@ -52,12 +52,6 @@ class InviteUserSerializer(serializers.Serializer):
     employee_number = serializers.CharField(max_length=8)
     name = serializers.CharField(max_length=255)
     email = serializers.EmailField(max_length=254)
-
-
-    def validate(self, data):
-        if data["employee_number"]:
-            raise serializers.ValidationError("8桁の社員番号を入力してください")
-        return data
     
     
 class ResetPasswordSerializer(serializers.Serializer):

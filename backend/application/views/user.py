@@ -1,5 +1,6 @@
-from application.emails import send_welcome_email
-from application.models.user import User, UserResetPassword
+import secrets
+from application.emails import send_invitation_email
+from application.models.user import User, UserResetPassword, UserInvitation
 from application.permissions import (
     IsGeneralUser,
     IsManagementUser,
@@ -15,6 +16,8 @@ from application.serializers.user import (
 from application.utils.csv_wrapper import CSVResponseWrapper, CSVUserListData
 from django.contrib.auth import update_session_auth_hash
 from django.db import DatabaseError, transaction
+from django.contrib.auth.hashers import make_password
+from django.utils.crypto import get_random_string
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from project.settings.environment import django_settings
@@ -32,36 +35,12 @@ class UserViewSet(ModelViewSet):
         match self.action:
             case "send_invite_user_mail":
                 return EmailSerializer
-            case "change_password":
+            case "create_password":
                 return CreatePasswordSerializer
             case "invite_user":
                 return InviteUserSerializer
             case _:
                 return UserSerializer
-
-    @action(detail=False, methods=["POST"])
-    def invite_user(self, request):
-        """指定したメールアドレス宛へ招待メールを送る
-
-        Args:
-            request: リクエスト
-
-        Returns:
-            HttpResponse
-        """
-        serializer = self.get_serializer(data=request.data)
-        # バリデーションに失敗したら400を返す
-        serializer.is_valid(raise_exception=True)
-        name = serializer.validated_data.get("name")
-        email = serializer.validated_data.get("email")
-        if User.objects.filter(email=email).exists():
-            return JsonResponse(data={"msg":"すでに有効化済みのユーザです"})
-        base_url = django_settings.BASE_URL
-        # 初回登録用のURLへ遷移
-        url = base_url + "/verify-user/"
-        # メール送信用メソッド
-        send_welcome_email(email=email, name=name, url=url)
-        return Response()
 
     # get_permissionsメソッドを使えば前述の表に従って権限を付与できる
     def get_permissions(self):
@@ -114,7 +93,6 @@ class UserViewSet(ModelViewSet):
         update_session_auth_hash(request, user)
         return HttpResponse()
 
-
     @action(detail=False, methods=["post"])
     def create_password(self, request):
         """パスワード登録をする
@@ -128,58 +106,137 @@ class UserViewSet(ModelViewSet):
                 JsonResponse
             ]
         """
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
-            user_reset_password = UserResetPassword.objects.get(
+            user_invitation_password = UserInvitation.objects.get(
                 token=serializer.validated_data["token"]
             )
-        except UserResetPassword.DoesNotExist:
+        except UserInvitation.DoesNotExist:
             return JsonResponse(
                 data={"msg": "無効なURLです"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         if (
-            user_reset_password.expiry is not None
-            and user_reset_password.expiry < timezone.now()
+            user_invitation_password.expiry is not None
+            and user_invitation_password.expiry < timezone.now()
         ):
             return JsonResponse(
                 data={"msg": "こちらのURLは有効期限切れです"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-
         try:
             with transaction.atomic():
-                user = user_reset_password.user
-                user.is_invitation_completed = True
+                user = user_invitation_password.user
+                user.is_verified = True
                 user.set_password(serializer.validated_data["new_password"])
                 user.save()
-                user_reset_password.delete()
         except DatabaseError:
             return JsonResponse(
                 data={"msg": "パスワードの登録に失敗しました"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        return HttpResponse()
+        return JsonResponse(
+            data={"msg": "パスワードの登録に成功しました"},
+            status=status.HTTP_200_OK,
+        )
 
-
-    @action(detail=False, methods=["post"])
+    @action(detail=False, methods=["POST"])
     def invite_user(self, request):
+        """指定したメールアドレス宛へユーザの招待メールを送る
+
+        Args:
+            request: リクエスト
+
+        Returns:
+            HttpResponse
+        """
+        # Userの新規登録と招待用トークンを作成する
         serializer = self.get_serializer(data=request.data)
+        # バリデーションに失敗したら400を返す
         serializer.is_valid(raise_exception=True)
         try:
-            pass
-        except BaseException:
+            with transaction.atomic():
+                user = User.objects.create(
+                    username=serializer.validated_data["name"],
+                    employee_number=serializer.validated_data[
+                        "employee_number"
+                    ],
+                    password=make_password(get_random_string(16)),
+                    email=serializer.validated_data["email"],
+                )
+                token = secrets.token_urlsafe(64)
+                UserInvitation.objects.create(
+                    token=token,
+                    user=user,
+                )
+                base_url = django_settings.BASE_URL
+                # 初回登録用のURLへ遷移
+                url = base_url + "/verify-user/" + token
+                send_invitation_email(
+                    email=user.email,
+                    name=user.username,
+                    url=url,
+                )
+                return JsonResponse(
+                    data={"msg": "招待メールを送信しました"},
+                    status=status.HTTP_200_OK,
+                )
+        except DatabaseError:
             return JsonResponse(
-                data={"msg": "ユーザの招待に失敗しました"},
+                data={"msg": "ユーザの登録に失敗しました"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        return HttpResponse()
-            
-            
+
+    @action(detail=True, methods=["post"])
+    def reinvite_user(self, request, pk):
+        """ユーザを再招待する
+
+        Args:
+            request (HttpRequest): HttpRequestオブジェクト
+
+        Returns:
+            Union[
+                HttpResponse,
+                JsonResponse
+            ]
+        """
+
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return JsonResponse(
+                data={"msg": "指定されたユーザは見つかりませんでした"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if user.is_verified:
+            return JsonResponse(
+                data={"msg": "指定されたユーザは招待済です"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        token = secrets.token_urlsafe(64)
+        UserInvitation.objects.create(
+            token=token,
+            user=user,
+        )
+
+        base_url = django_settings.BASE_URL
+        # 初回登録用のURLへ遷移
+        url = base_url + "/verify-user/" + token
+        send_invitation_email(
+            email=user.email,
+            name=user.username,
+            url=url,
+        )
+        return JsonResponse(
+            data={"msg": "招待メールを再送信しました"},
+            status=status.HTTP_200_OK,
+        )
+
     @action(detail=False, methods=["post"])
     def reset_password(self, request):
         serializer = self.get_serializer(data=request.data)
