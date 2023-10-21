@@ -15,6 +15,7 @@ class DjangoSettings(BaseSettings):
     POSTGRES_PORT: int = 5432
     TRUSTED_ORIGINS: str = "http://localhost http://localhost:9000"
     SLACK_ENDPOINT_URL: str = "http://test"
+    BASE_URL: str = "http://localhost"
 
 
 class AwsSettings(BaseSettings):

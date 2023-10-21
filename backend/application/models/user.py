@@ -65,6 +65,10 @@ class User(AbstractUser):
         auto_now=True,
         db_comment="更新日",
     )
+    is_verified = models.BooleanField(
+        default=False,
+        db_comment="有効化有無",
+    )
 
     USERNAME_FIELD = "employee_number"
     REQUIRED_FIELDS = ["email", "username"]
@@ -76,3 +80,71 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class UserResetPassword(models.Model):
+    """社員パスワード設定テーブルに対応するモデルクラス"""
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        db_comment="システムユーザID",
+    )
+    token = models.CharField(
+        max_length=255,
+        db_comment="パスワード設定メールURL用トークン",
+    )
+    expiry = models.DateTimeField(
+        null=True,
+        default=None,
+        db_comment="有効期限",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        db_comment="作成日時",
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name="user_password_reset",
+        db_comment="社員テーブル外部キー",
+    )
+
+    class Meta:
+        db_table = "user_password_reset"
+        db_table_comment = "社員パスワード再設定"
+
+
+class UserInvitation(models.Model):
+    """社員招待用テーブルに対応するモデルクラス"""
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        db_comment="システムユーザID",
+    )
+    token = models.CharField(
+        max_length=255,
+        db_comment="パスワード設定メールURL用トークン",
+    )
+    expiry = models.DateTimeField(
+        null=True,
+        default=None,
+        db_comment="有効期限",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        db_comment="作成日時",
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name="user_invitation",
+        db_comment="社員テーブル外部キー",
+    )
+
+    class Meta:
+        db_table = "user_password_setting"
+        db_table_comment = "社員パスワード再設定"

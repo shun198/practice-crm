@@ -179,3 +179,5 @@ LOGGING = {
         },
     },
 }
+
+BASE_URL = django_settings.BASE_URL

@@ -43,3 +43,10 @@ sns_injector.binder.install(LocalSnsModule())
 ses_injector.binder.install(LocalSesModule())
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
+
+# メールの設定
+EMAIL_HOST = "mail"
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_PORT = 1025
+EMAIL_USE_TLS = False
