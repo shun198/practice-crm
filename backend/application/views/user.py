@@ -1,4 +1,5 @@
 import secrets
+from datetime import timedelta
 from logging import getLogger
 
 from django.contrib.auth import update_session_auth_hash
@@ -9,10 +10,10 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from application.emails import send_invitation_email
+from application.emails import send_invitation_email, send_reset_email
 from application.models.user import User, UserInvitation, UserResetPassword
 from application.permissions import (
     IsGeneralUser,
@@ -26,6 +27,7 @@ from application.serializers.user import (
     EmailSerializer,
     InviteUserSerializer,
     ResetPasswordSerializer,
+    SendResetPasswordEmailSerializer,
     UserSerializer,
     VerifyUserSerializer,
 )
@@ -52,6 +54,8 @@ class UserViewSet(ModelViewSet):
                 return ResetPasswordSerializer
             case "check_reset_password_token" | "check_invitation_token":
                 return CheckTokenSerializer
+            case "send_reset_password_email":
+                return SendResetPasswordEmailSerializer
             case _:
                 return UserSerializer
 
@@ -67,8 +71,10 @@ class UserViewSet(ModelViewSet):
             permission_classes = [IsGeneralUser]
         elif self.action == "destroy":
             permission_classes = [IsSuperUser]
-        elif self.action in ["list", "retrieve"]:
+        elif self.action in {"list", "retrieve"}:
             permission_classes = [IsPartTimeUser]
+        elif self.action in {"send_reset_password_email", "change_password"}:
+            permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
@@ -107,6 +113,54 @@ class UserViewSet(ModelViewSet):
         update_session_auth_hash(request, user)
         return HttpResponse()
 
+    @action(detail=False, methods=["POST"])
+    def invite_user(self, request):
+        """指定したメールアドレス宛へユーザの招待メールを送る
+
+        Args:
+            request: リクエスト
+
+        Returns:
+            HttpResponse
+        """
+        # Userの新規登録と招待用トークンを作成する
+        serializer = self.get_serializer(data=request.data)
+        # バリデーションに失敗したら400を返す
+        serializer.is_valid(raise_exception=True)
+        try:
+            with transaction.atomic():
+                user = User.objects.create(
+                    username=serializer.validated_data["name"],
+                    employee_number=serializer.validated_data[
+                        "employee_number"
+                    ],
+                    password=make_password(get_random_string(16)),
+                    email=serializer.validated_data["email"],
+                )
+                token = secrets.token_urlsafe(64)
+                expiry = timezone.now() + timedelta(days=1)
+                UserInvitation.objects.create(
+                    token=token, user=user, expiry=expiry
+                )
+                base_url = django_settings.BASE_URL
+                # 初回登録用のURLへ遷移
+                url = base_url + "/verify-user/" + token
+                send_invitation_email(
+                    email=user.email,
+                    name=user.username,
+                    url=url,
+                )
+                return JsonResponse(
+                    data={"msg": "招待メールを送信しました"},
+                    status=status.HTTP_200_OK,
+                )
+        except DatabaseError as e:
+            self.emergency_logger.error(e)
+            return JsonResponse(
+                data={"msg": "ユーザの登録に失敗しました"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
     @action(detail=False, methods=["post"])
     def verify_user(self, request):
         """新規ユーザを認証する
@@ -142,11 +196,10 @@ class UserViewSet(ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
         try:
-            with transaction.atomic():
-                user = user_invitation_password.user
-                user.is_verified = True
-                user.set_password(serializer.validated_data["new_password"])
-                user.save()
+            user = user_invitation_password.user
+            user.is_verified = True
+            user.set_password(serializer.validated_data["new_password"])
+            user.save()
         except DatabaseError as e:
             self.emergency_logger.error(e)
             return JsonResponse(
@@ -157,54 +210,6 @@ class UserViewSet(ModelViewSet):
             data={"msg": "新規ユーザの認証に成功しました"},
             status=status.HTTP_200_OK,
         )
-
-    @action(detail=False, methods=["POST"])
-    def invite_user(self, request):
-        """指定したメールアドレス宛へユーザの招待メールを送る
-
-        Args:
-            request: リクエスト
-
-        Returns:
-            HttpResponse
-        """
-        # Userの新規登録と招待用トークンを作成する
-        serializer = self.get_serializer(data=request.data)
-        # バリデーションに失敗したら400を返す
-        serializer.is_valid(raise_exception=True)
-        try:
-            with transaction.atomic():
-                user = User.objects.create(
-                    username=serializer.validated_data["name"],
-                    employee_number=serializer.validated_data[
-                        "employee_number"
-                    ],
-                    password=make_password(get_random_string(16)),
-                    email=serializer.validated_data["email"],
-                )
-                token = secrets.token_urlsafe(64)
-                UserInvitation.objects.create(
-                    token=token,
-                    user=user,
-                )
-                base_url = django_settings.BASE_URL
-                # 初回登録用のURLへ遷移
-                url = base_url + "/verify-user/" + token
-                send_invitation_email(
-                    email=user.email,
-                    name=user.username,
-                    url=url,
-                )
-                return JsonResponse(
-                    data={"msg": "招待メールを送信しました"},
-                    status=status.HTTP_200_OK,
-                )
-        except DatabaseError as e:
-            self.emergency_logger.error(e)
-            return JsonResponse(
-                data={"msg": "ユーザの登録に失敗しました"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
     @action(detail=False, methods=["post"])
     def check_invitation_token(self, request):
@@ -250,7 +255,6 @@ class UserViewSet(ModelViewSet):
         url = base_url + "/verify-user/" + token
         send_invitation_email(
             email=user.email,
-            name=user.username,
             url=url,
         )
         return JsonResponse(
@@ -259,7 +263,7 @@ class UserViewSet(ModelViewSet):
         )
 
     @action(detail=False, methods=["POST"])
-    def send_reset_password(self, request):
+    def send_reset_password_email(self, request):
         """指定したメールアドレス宛へパスワード再設定メールを送る
 
         Args:
@@ -273,51 +277,25 @@ class UserViewSet(ModelViewSet):
         # バリデーションに失敗したら400を返す
         serializer.is_valid(raise_exception=True)
         try:
-            with transaction.atomic():
-                user = User.objects.create(
-                    username=serializer.validated_data["name"],
-                    employee_number=serializer.validated_data[
-                        "employee_number"
-                    ],
-                    password=make_password(get_random_string(16)),
-                    email=serializer.validated_data["email"],
-                )
-                token = secrets.token_urlsafe(64)
-                UserInvitation.objects.create(
-                    token=token,
-                    user=user,
-                )
-                base_url = django_settings.BASE_URL
-                # 初回登録用のURLへ遷移
-                url = base_url + "/verify-user/" + token
-                send_invitation_email(
-                    email=user.email,
-                    name=user.username,
-                    url=url,
-                )
-                return JsonResponse(
-                    data={"msg": "招待メールを送信しました"},
-                    status=status.HTTP_200_OK,
-                )
-        except DatabaseError as e:
-            self.emergency_logger.error(e)
-            return JsonResponse(
-                data={"msg": "ユーザの登録に失敗しました"},
-                status=status.HTTP_400_BAD_REQUEST,
+            user = User.objects.get(
+                email=serializer.validated_data["email"],
             )
-
-    @action(detail=False, methods=["post"])
-    def reset_password(self, request, pk):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
-            user = User.objects.get(pk=pk)
-            user.set_password(serializer.validated_data["new_password"])
-            user.save()
-            # sessionを更新する
-            update_session_auth_hash(request, user)
+            token = secrets.token_urlsafe(64)
+            expiry = timezone.now() + timedelta(minutes=30)
+            UserResetPassword.objects.create(
+                token=token,
+                user=user,
+                expiry=expiry,
+            )
+            base_url = django_settings.BASE_URL
+            # 初回登録用のURLへ遷移
+            url = base_url + "/reset-password/" + token
+            send_reset_email(
+                email=user.email,
+                url=url,
+            )
             return JsonResponse(
-                data={"msg": "パスワードを再設定しました"},
+                data={"msg": "パスワード再設定メールを送信しました"},
                 status=status.HTTP_200_OK,
             )
         except User.DoesNotExist:
@@ -325,6 +303,53 @@ class UserViewSet(ModelViewSet):
                 data={"msg": "指定されたユーザは見つかりませんでした"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+    @action(detail=False, methods=["post"])
+    def reset_password(self, request, pk):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            user_reset_password = UserResetPassword.objects.get(
+                token=serializer.validated_data["token"]
+            )
+        except UserResetPassword.DoesNotExist:
+            return JsonResponse(
+                data={"msg": "無効なURLです"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if (
+            user_reset_password.expiry is not None
+            and user_reset_password.expiry < timezone.now()
+        ):
+            return JsonResponse(
+                data={"msg": "こちらのURLは有効期限切れです"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        try:
+            user = user_reset_password.user
+            user.set_password(serializer.validated_data["new_password"])
+            user.save()
+        except DatabaseError as e:
+            self.emergency_logger.error(e)
+            return JsonResponse(
+                data={"msg": "新規ユーザの認証に失敗しました"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return JsonResponse(
+            data={"msg": "新規ユーザの認証に成功しました"},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=False, methods=["post"])
+    def check_reset_password_token(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return JsonResponse(data={"check": False})
+
+        check = self._check_reset_password(serializer.data["token"]) != None
+        return JsonResponse(data={"check": check})
 
     def _check_invitation(self, token):
         """ユーザ招待用トークンを認証する
@@ -348,3 +373,15 @@ class UserViewSet(ModelViewSet):
         if invitation.expiry < timezone.localtime() or invitation.is_used:
             return None
         return invitation
+
+    def _check_reset_password(self, token):
+        try:
+            reset_password = UserResetPassword.objects.select_related(
+                "user"
+            ).get(token=token)
+        except:
+            return None
+
+        if reset_password.expiry < timezone.now() or reset_password.is_used:
+            return None
+        return reset_password

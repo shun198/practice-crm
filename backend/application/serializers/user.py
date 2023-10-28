@@ -89,3 +89,9 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 class CheckTokenSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=1000)
+    """トークン"""
+
+
+class SendResetPasswordEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=254)
+    """社員メールアドレス"""
