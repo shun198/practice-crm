@@ -364,9 +364,7 @@ class UserViewSet(ModelViewSet):
             ]
         """
         try:
-            invitation = UserInvitation.objects.select_related("user").get(
-                token=token
-            )
+            invitation = UserInvitation.objects.get(token=token)
         except:
             return None
 
@@ -376,9 +374,7 @@ class UserViewSet(ModelViewSet):
 
     def _check_reset_password(self, token):
         try:
-            reset_password = UserResetPassword.objects.select_related(
-                "user"
-            ).get(token=token)
+            reset_password = UserResetPassword.objects.get(token=token)
         except:
             return None
 
