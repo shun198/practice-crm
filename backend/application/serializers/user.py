@@ -75,6 +75,8 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
+    """パスワード変更用Serializer"""
+
     new_password = serializers.CharField(max_length=255)
     """新規パスワード"""
     confirm_password = serializers.CharField(max_length=255)
@@ -88,10 +90,14 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class CheckTokenSerializer(serializers.Serializer):
-    token = serializers.CharField(max_length=1000)
+    """トークンが有効であるか確認するSerializer"""
+
+    token = serializers.CharField(max_length=255)
     """トークン"""
 
 
 class SendResetPasswordEmailSerializer(serializers.Serializer):
+    """パスワード再設定メールを送信するSerializer"""
+
     email = serializers.EmailField(max_length=254)
     """社員メールアドレス"""
