@@ -2,17 +2,6 @@ import secrets
 from datetime import timedelta
 from logging import getLogger
 
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.hashers import make_password
-from django.db import DatabaseError, transaction
-from django.http import HttpResponse, JsonResponse
-from django.utils import timezone
-from django.utils.crypto import get_random_string
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
-
 from application.emails import send_invitation_email, send_reset_email
 from application.models.user import User, UserInvitation, UserResetPassword
 from application.permissions import (
@@ -33,7 +22,17 @@ from application.serializers.user import (
 )
 from application.utils.csv_wrapper import CSVResponseWrapper, CSVUserListData
 from application.utils.logs import LoggerName
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.hashers import make_password
+from django.db import DatabaseError, transaction
+from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
+from django.utils.crypto import get_random_string
 from project.settings.environment import django_settings
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
 
 
 class UserViewSet(ModelViewSet):
@@ -196,10 +195,11 @@ class UserViewSet(ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
         try:
-            user = user_invitation_password.user
-            user.is_verified = True
-            user.set_password(serializer.validated_data["new_password"])
-            user.save()
+            with transaction.atomic():
+                user = user_invitation_password.user
+                user.is_verified = True
+                user.set_password(serializer.validated_data["new_password"])
+                user.save()
         except DatabaseError as e:
             self.emergency_logger.error(e)
             return JsonResponse(
@@ -246,9 +246,11 @@ class UserViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         token = secrets.token_urlsafe(64)
+        expiry = timezone.now() + timedelta(days=1)
         UserInvitation.objects.create(
             token=token,
             user=user,
+            expiry=expiry,
         )
         base_url = django_settings.BASE_URL
         # 初回登録用のURLへ遷移
@@ -280,6 +282,12 @@ class UserViewSet(ModelViewSet):
             user = User.objects.get(
                 email=serializer.validated_data["email"],
             )
+        except User.DoesNotExist:
+            return JsonResponse(
+                data={"msg": "指定されたユーザは見つかりませんでした"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        try:
             token = secrets.token_urlsafe(64)
             expiry = timezone.now() + timedelta(minutes=30)
             UserResetPassword.objects.create(
@@ -287,22 +295,22 @@ class UserViewSet(ModelViewSet):
                 user=user,
                 expiry=expiry,
             )
-            base_url = django_settings.BASE_URL
-            # 初回登録用のURLへ遷移
-            url = base_url + "/reset-password/" + token
-            send_reset_email(
-                email=user.email,
-                url=url,
-            )
+        except DatabaseError:
             return JsonResponse(
-                data={"msg": "パスワード再設定メールを送信しました"},
-                status=status.HTTP_200_OK,
+                data={"msg": "パスワード再設定に失敗しました"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        except User.DoesNotExist:
-            return JsonResponse(
-                data={"msg": "指定されたユーザは見つかりませんでした"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        base_url = django_settings.BASE_URL
+        # 初回登録用のURLへ遷移
+        url = base_url + "/reset-password/" + token
+        send_reset_email(
+            email=user.email,
+            url=url,
+        )
+        return JsonResponse(
+            data={"msg": "パスワード再設定メールを送信しました"},
+            status=status.HTTP_200_OK,
+        )
 
     @action(detail=False, methods=["post"])
     def reset_password(self, request, pk):
@@ -328,9 +336,10 @@ class UserViewSet(ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
         try:
-            user = user_reset_password.user
-            user.set_password(serializer.validated_data["new_password"])
-            user.save()
+            with transaction.atomic():
+                user = user_reset_password.user
+                user.set_password(serializer.validated_data["new_password"])
+                user.save()
         except DatabaseError as e:
             self.emergency_logger.error(e)
             return JsonResponse(

@@ -83,7 +83,7 @@ class User(AbstractUser):
 
 
 class UserResetPassword(models.Model):
-    """社員パスワード設定テーブルに対応するモデルクラス"""
+    """ユーザパスワード再設定テーブルに対応するモデルクラス"""
 
     id = models.UUIDField(
         primary_key=True,
@@ -108,16 +108,16 @@ class UserResetPassword(models.Model):
         User,
         on_delete=models.PROTECT,
         related_name="user_password_reset",
-        db_comment="社員テーブル外部キー",
+        db_comment="ユーザテーブル外部キー",
     )
 
     class Meta:
-        db_table = "user_password_reset"
-        db_table_comment = "社員パスワード再設定"
+        db_table = "PasswordReset"
+        db_table_comment = "ユーザパスワード再設定"
 
 
 class UserInvitation(models.Model):
-    """社員招待用テーブルに対応するモデルクラス"""
+    """ユーザ招待用テーブルに対応するモデルクラス"""
 
     id = models.UUIDField(
         primary_key=True,
@@ -127,7 +127,7 @@ class UserInvitation(models.Model):
     )
     token = models.CharField(
         max_length=255,
-        db_comment="パスワード設定メールURL用トークン",
+        db_comment="ユーザ招待用メールURL用トークン",
     )
     expiry = models.DateTimeField(
         null=True,
@@ -146,5 +146,5 @@ class UserInvitation(models.Model):
     )
 
     class Meta:
-        db_table = "user_password_setting"
-        db_table_comment = "社員パスワード再設定"
+        db_table = "Invitation"
+        db_table_comment = "ユーザ招待用"
