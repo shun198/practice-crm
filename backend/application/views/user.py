@@ -361,7 +361,7 @@ class UserViewSet(ModelViewSet):
         return JsonResponse(data={"check": check})
 
     def _check_invitation(self, token):
-        """ユーザ招待用トークンを認証する
+        """ユーザ招待用トークンを確認する
 
         Args:
             token : ユーザ認証用トークン
@@ -382,6 +382,17 @@ class UserViewSet(ModelViewSet):
         return invitation
 
     def _check_reset_password(self, token):
+        """パスワード再設定用トークンを確認する
+
+        Args:
+            token : ユーザ認証用トークン
+
+        Returns:
+            Union[
+                Invitationオブジェクト,
+                None
+            ]
+        """
         try:
             reset_password = UserResetPassword.objects.get(token=token)
         except:
