@@ -274,9 +274,7 @@ class UserViewSet(ModelViewSet):
         Returns:
             HttpResponse
         """
-        # Userの新規登録と招待用トークンを作成する
         serializer = self.get_serializer(data=request.data)
-        # バリデーションに失敗したら400を返す
         serializer.is_valid(raise_exception=True)
         try:
             user = User.objects.get(
@@ -343,11 +341,11 @@ class UserViewSet(ModelViewSet):
         except DatabaseError as e:
             self.emergency_logger.error(e)
             return JsonResponse(
-                data={"msg": "新規ユーザの認証に失敗しました"},
+                data={"msg": "ユーザのパスワード再設定に失敗しました"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return JsonResponse(
-            data={"msg": "新規ユーザの認証に成功しました"},
+            data={"msg": "ユーザのパスワード再設定に成功しました"},
             status=status.HTTP_200_OK,
         )
 
