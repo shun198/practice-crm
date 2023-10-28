@@ -299,7 +299,6 @@ class UserViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         base_url = django_settings.BASE_URL
-        # 初回登録用のURLへ遷移
         url = base_url + "/reset-password/" + token
         send_reset_email(
             email=user.email,
