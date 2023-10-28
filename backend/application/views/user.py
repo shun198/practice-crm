@@ -365,7 +365,7 @@ class UserViewSet(ModelViewSet):
 
         Returns:
             Union[
-                Invitationオブジェクト,
+                UserInvitationオブジェクト,
                 None
             ]
         """
@@ -382,11 +382,11 @@ class UserViewSet(ModelViewSet):
         """パスワード再設定用トークンを確認する
 
         Args:
-            token : ユーザ認証用トークン
+            token : パスワード再設定用トークン
 
         Returns:
             Union[
-                Invitationオブジェクト,
+                UserResetPasswordオブジェクト,
                 None
             ]
         """
