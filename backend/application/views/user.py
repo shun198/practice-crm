@@ -58,7 +58,6 @@ class UserViewSet(ModelViewSet):
             case _:
                 return UserSerializer
 
-    # get_permissionsメソッドを使えば前述の表に従って権限を付与できる
     def get_permissions(self):
         if self.action in {
             "update",
@@ -72,7 +71,7 @@ class UserViewSet(ModelViewSet):
             permission_classes = [IsSuperUser]
         elif self.action in {"list", "retrieve"}:
             permission_classes = [IsPartTimeUser]
-        elif self.action in {"send_reset_password_email", "change_password"}:
+        elif self.action == "send_reset_password_email":
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
@@ -95,9 +94,7 @@ class UserViewSet(ModelViewSet):
     def change_password(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         user = request.user
-
         if not user.check_password(
             serializer.validated_data["current_password"]
         ):
@@ -293,7 +290,8 @@ class UserViewSet(ModelViewSet):
                 user=user,
                 expiry=expiry,
             )
-        except DatabaseError:
+        except DatabaseError as e:
+            self.emergency_logger.error(e)
             return JsonResponse(
                 data={"msg": "パスワード再設定に失敗しました"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -310,7 +308,7 @@ class UserViewSet(ModelViewSet):
         )
 
     @action(detail=False, methods=["post"])
-    def reset_password(self, request, pk):
+    def reset_password(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

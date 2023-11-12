@@ -1,7 +1,6 @@
+from application.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
-
-from application.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -77,6 +76,8 @@ class ResetPasswordSerializer(serializers.Serializer):
 class ChangePasswordSerializer(serializers.Serializer):
     """パスワード変更用Serializer"""
 
+    current_password = serializers.CharField(max_length=255)
+    """現在のパスワード"""
     new_password = serializers.CharField(max_length=255)
     """新規パスワード"""
     confirm_password = serializers.CharField(max_length=255)
