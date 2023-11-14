@@ -35,7 +35,7 @@ function LoginReactHookForm() {
     if (response.ok) {
       // ログイン成功
       console.log('ログイン成功');
-      router.push('/login_success');
+      router.push('/products');
       // リダイレクトなど、ログイン後の処理を追加
     } else {
       // ログイン失敗
