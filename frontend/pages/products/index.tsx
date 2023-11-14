@@ -9,7 +9,7 @@ function ProductList() {
 
   useEffect(() => {
     // データを取得するためのAPIのURLを指定
-    const apiUrl = process.env.NEXT_PUBLIC_RESTAPI_URL + '/api/product/';
+    const apiUrl = "http://localhost/back/api/product/";
     const csrftoken = Cookies.get('csrftoken') || '';
     const credentials = 'include';
 

@@ -60,20 +60,21 @@ services:
     depends_on:
       - app
 
-  front:
-    container_name: front
-    build:
-      context: .
-      dockerfile: containers/front/Dockerfile
-    volumes:
-      - ./frontend:/code
-      - node_modules_volume:/frontend/node_modules
-    command: sh -c "npm run dev"
-    ports:
-      - '3000:3000'
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-      - NEXT_PUBLIC_RESTAPI_URL=http://localhost/back
+  # volta検証のためコメントアウト
+  # front:
+  #   container_name: front
+  #   build:
+  #     context: .
+  #     dockerfile: containers/front/Dockerfile
+  #   volumes:
+  #     - ./frontend:/code
+  #     - node_modules_volume:/frontend/node_modules
+  #   command: sh -c "npm run dev"
+  #   ports:
+  #     - '3000:3000'
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true
+  #     - NEXT_PUBLIC_RESTAPI_URL=http://localhost/back
 
   localstack:
     image: localstack/localstack
