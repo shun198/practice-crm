@@ -1,8 +1,6 @@
 import pytest
 from rest_framework import status
 
-from application.tests.common_method import login
-
 
 @pytest.fixture
 def get_user_url():
@@ -15,26 +13,36 @@ def get_user_details_url(id):
 
 @pytest.mark.django_db
 def test_management_user_can_list_users(
-    client, login_management, get_user_url
+    client, management_user, user_password, get_user_url
 ):
     """管理者ユーザでユーザの一覧を表示できるテスト"""
-    login(client, login_management)
+    client.login(
+        employee_number=management_user.employee_number, password=user_password
+    )
     response = client.get(get_user_url, format="json")
     assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
-def test_general_user_can_list_users(client, login_management, get_user_url):
+def test_general_user_can_list_users(
+    client, general_user, user_password, get_user_url
+):
     """一般ユーザでユーザの一覧を表示できるテスト"""
-    login(client, login_management)
+    client.login(
+        employee_number=general_user.employee_number, password=user_password
+    )
     response = client.get(get_user_url, format="json")
     assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
-def test_sales_user_can_list_users(client, login_part_time, get_user_url):
+def test_sales_user_can_list_users(
+    client, part_time_user, user_password, get_user_url
+):
     """アルバイトユーザでユーザの一覧を表示できるテスト"""
-    login(client, login_part_time)
+    client.login(
+        employee_number=part_time_user.employee_number, password=user_password
+    )
     response = client.get(get_user_url, format="json")
     assert response.status_code == status.HTTP_200_OK
 
