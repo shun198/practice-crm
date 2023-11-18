@@ -7,7 +7,15 @@ from application.tests.common_method import login, mail_confirm
 
 @pytest.fixture
 def send_invite_user_mail_url():
-    return "/api/users/send_invite_user_mail/"
+    return "/api/users/invite_user/"
+
+@pytest.fixture
+def email_data():
+    return {
+        "employee_number": "00000010",
+        "email": "test_user_01@test.com",
+        "name": "test_user_01",
+    }
 
 
 @pytest.mark.django_db()
@@ -20,7 +28,7 @@ def test_management_user_can_send_invite_user_email(
         send_invite_user_mail_url, email_data, format="json"
     )
     assert response.status_code == status.HTTP_200_OK
-    mail_confirm(mail.outbox, email_data["email"], "ようこそ")
+    mail_confirm(mail.outbox, email_data["email"], "アカウント登録のお知らせ")
 
 
 @pytest.mark.django_db()

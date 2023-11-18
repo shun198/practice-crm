@@ -1,6 +1,8 @@
 import pytest
 from django.core.management import call_command
 from rest_framework.test import APIClient
+from application.tests.factories.user import UserFactory
+from application.models.user import User
 
 
 @pytest.fixture(scope="session")
@@ -34,12 +36,32 @@ def login_part_time():
 
 
 @pytest.fixture
-def email_data():
-    return {
-        "email": "test_user_01@test.com",
-    }
+def client(scope="session"):
+    return APIClient()
 
 
 @pytest.fixture
-def client(scope="session"):
-    return APIClient()
+def management_user(user_password):
+    return UserFactory(
+        password=user_password,
+        role=User.Role.MANAGEMENT,
+    )
+
+
+@pytest.fixture
+def general_user(user_password):
+    return UserFactory(
+        password=user_password,
+        role=User.Role.GENERAL,
+    )
+
+@pytest.fixture
+def part_time_user(user_password):
+    return UserFactory(
+        password=user_password,
+        role=User.Role.PART_TIME,
+    )
+
+@pytest.fixture
+def user_password():
+    return "test"

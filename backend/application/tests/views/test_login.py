@@ -47,12 +47,12 @@ def test_user_cannot_login_with_incorrect_password(
     response = client.post(get_login_url, login_management, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {
-        "msg": "either employee number or password is incorrect"
+        "msg": "社員番号またはパスワードが間違っています"
     }
 
 
 @pytest.mark.django_db
-def test_user__cannot_login_with_incorrect_password(
+def test_user_cannot_login_with_incorrect_password(
     client, login_management, get_login_url
 ):
     """間違ったパスワードでログインできないことをテスト"""
@@ -60,7 +60,7 @@ def test_user__cannot_login_with_incorrect_password(
     response = client.post(get_login_url, login_management, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == {
-        "msg": "either employee number or password is incorrect"
+        "msg": "社員番号またはパスワードが間違っています"
     }
 
 

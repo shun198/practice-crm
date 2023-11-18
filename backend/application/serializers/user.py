@@ -23,12 +23,6 @@ class LoginSerializer(serializers.ModelSerializer):
         fields = ["employee_number", "password"]
 
 
-class EmailSerializer(serializers.Serializer):
-    """Email用シリアライザ"""
-
-    email = serializers.EmailField(max_length=255)
-
-
 class VerifyUserSerializer(serializers.Serializer):
     """ユーザ認証用シリアライザ"""
 

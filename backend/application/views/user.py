@@ -24,7 +24,6 @@ from application.permissions import (
 from application.serializers.user import (
     ChangePasswordSerializer,
     CheckTokenSerializer,
-    EmailSerializer,
     InviteUserSerializer,
     ResetPasswordSerializer,
     SendResetPasswordEmailSerializer,
@@ -42,8 +41,6 @@ class UserViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         match self.action:
-            case "send_invite_user_mail":
-                return EmailSerializer
             case "change_password":
                 return ChangePasswordSerializer
             case "verify_user":
@@ -64,6 +61,7 @@ class UserViewSet(ModelViewSet):
             "update",
             "partial_update",
             "send_invite_user_mail",
+            "invite_user",
         }:
             permission_classes = [IsManagementUser]
         elif self.action == "create":
@@ -144,7 +142,6 @@ class UserViewSet(ModelViewSet):
                 url = base_url + "/verify-user/" + token
                 send_invitation_email(
                     email=user.email,
-                    name=user.username,
                     url=url,
                 )
                 return JsonResponse(
