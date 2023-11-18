@@ -33,7 +33,7 @@ def test_employee_number_length_cannot_be_null():
 
 
 @pytest.mark.django_db
-def test_employee_number_length_must_be_unique():
+def test_employee_number_must_be_unique():
     """employee_numberはuniqueでなければならない"""
     employee_number = "1" * 8
     UserFactory(employee_number=employee_number)

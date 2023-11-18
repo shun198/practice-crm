@@ -1,6 +1,8 @@
 import pytest
 from rest_framework import status
 
+from application.tests.factories.user import UserFactory
+
 
 @pytest.fixture
 def get_user_url():
@@ -52,3 +54,42 @@ def test_user_cannot_list_users_without_login(client, get_user_url):
     """ログインなしでユーザの一覧を表示できないテスト"""
     response = client.get(get_user_url, format="json")
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_management_user_can_list_user_details(
+    client, management_user, user_password
+):
+    """管理者ユーザでユーザの詳細を表示できるテスト"""
+    user = UserFactory()
+    client.login(
+        employee_number=management_user.employee_number, password=user_password
+    )
+    response = client.get(get_user_details_url(user.id), format="json")
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_general_user_can_list_user_details(
+    client, general_user, user_password
+):
+    """一般ユーザでユーザの詳細を表示できるテスト"""
+    user = UserFactory()
+    client.login(
+        employee_number=general_user.employee_number, password=user_password
+    )
+    response = client.get(get_user_details_url(user.id), format="json")
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_part_time_user_can_list_user_details(
+    client, part_time_user, user_password
+):
+    """アルバイトユーザでユーザの詳細を表示できるテスト"""
+    user = UserFactory()
+    client.login(
+        employee_number=part_time_user.employee_number, password=user_password
+    )
+    response = client.get(get_user_details_url(user.id), format="json")
+    assert response.status_code == status.HTTP_200_OK

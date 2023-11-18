@@ -11,16 +11,12 @@ from django.utils.crypto import get_random_string
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from application.emails import send_invitation_email, send_reset_email
 from application.models.user import User, UserInvitation, UserResetPassword
-from application.permissions import (
-    IsGeneralUser,
-    IsManagementUser,
-    IsPartTimeUser,
-    IsSuperUser,
-)
+from application.permissions import IsGeneralUser, IsManagementUser
 from application.serializers.user import (
     ChangePasswordSerializer,
     CheckTokenSerializer,
@@ -58,7 +54,9 @@ class UserViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action in {
+            "create",
             "update",
+            "destroy",
             "partial_update",
             "send_invite_user_mail",
             "invite_user",
@@ -66,20 +64,40 @@ class UserViewSet(ModelViewSet):
             permission_classes = [IsManagementUser]
         elif self.action == "create":
             permission_classes = [IsGeneralUser]
-        elif self.action == "destroy":
-            permission_classes = [IsSuperUser]
-        elif self.action in {"list", "retrieve"}:
-            permission_classes = [IsPartTimeUser]
         elif self.action == "send_reset_password_email":
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
+    def destroy(self, request, *args, **kwargs):
+        """システムユーザを削除するAPI
+
+        Args:
+            request : リクエスト
+
+        Returns:
+            Union[
+                Response,
+                JsonResponse
+            ]
+        """
+        instance = self.get_object()
+        if request.user == instance:
+            return JsonResponse(
+                data={"msg": "自身を削除する事は出来ません"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(methods=["post"], detail=False)
     def export(self, request):
-        """
-        CSV形式でユーザー一覧をエクスポートするAPI
+        """CSV形式でユーザー一覧をエクスポートするAPI
+
+        Args:
+            request : リクエスト
+
         Returns:
             CSVファイル
         """
@@ -91,6 +109,14 @@ class UserViewSet(ModelViewSet):
 
     @action(methods=["post"], detail=False)
     def change_password(self, request):
+        """パスワードを変更するAPI
+
+        Args:
+            request : リクエスト
+
+        Returns:
+            JsonResponse
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
@@ -307,6 +333,14 @@ class UserViewSet(ModelViewSet):
 
     @action(detail=False, methods=["post"])
     def reset_password(self, request):
+        """パスワードを再設定するAPI
+
+        Args:
+            request : リクエスト
+
+        Returns:
+            JsonResponse
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
