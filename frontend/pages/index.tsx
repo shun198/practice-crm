@@ -1,14 +1,12 @@
 import React from 'react';
-// import LoginForm from '../components/elements/Form/LoginForm';
-import LoginReactHookForm from '../components/elements/Form/LoginReactHookForm'
+import LoginForm from '../components/LoginForm'
 
 const Login = () => {
 
   return (
     <>
       <div>
-        {/* <LoginForm/> */}
-        <LoginReactHookForm/>
+        <LoginForm/>
       </div>
     </>
   );

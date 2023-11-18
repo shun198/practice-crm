@@ -88,7 +88,7 @@ function LoginReactHookForm() {
           />
             {errors.password?.message && <div>{errors.password.message}</div>}
         </div>
-        <button type="submit" className="mt-4 inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-center text-gray-900 hover:bg-gray-100">ログイン</button>
+        <button type="submit">ログイン</button>
       </form>
     </div>
   );
