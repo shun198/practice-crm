@@ -2,6 +2,17 @@ import secrets
 from datetime import timedelta
 from logging import getLogger
 
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.hashers import make_password
+from django.db import DatabaseError, transaction
+from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
+from django.utils.crypto import get_random_string
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
+
 from application.emails import send_invitation_email, send_reset_email
 from application.models.user import User, UserInvitation, UserResetPassword
 from application.permissions import (
@@ -22,17 +33,7 @@ from application.serializers.user import (
 )
 from application.utils.csv_wrapper import CSVResponseWrapper, CSVUserListData
 from application.utils.logs import LoggerName
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.hashers import make_password
-from django.db import DatabaseError, transaction
-from django.http import HttpResponse, JsonResponse
-from django.utils import timezone
-from django.utils.crypto import get_random_string
 from project.settings.environment import django_settings
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
 
 
 class UserViewSet(ModelViewSet):
