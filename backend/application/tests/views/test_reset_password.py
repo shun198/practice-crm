@@ -144,7 +144,7 @@ def test_reset_password_token_is_invalid(
     client,
     get_reset_password_url,
 ):
-    """パスワード再設定用トークンがNoneのため、パスワード再設定メールを送信できないことを確認"""
+    """パスワード再設定用トークンの有効期限が切れているため、パスワードを再設定できないことを確認"""
     user = UserFactory()
     reset_password = UserResetPasswordFactory(user=user)
     post_reset_password = {
