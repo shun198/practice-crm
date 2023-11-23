@@ -6,10 +6,10 @@ from django.utils import timezone
 from freezegun import freeze_time
 from rest_framework import status
 
-from application.models import UserResetPassword, User
+from application.models import User, UserResetPassword
 from application.tests.common_method import mail_confirm
-from application.tests.factories.user_reset_password import UserResetPasswordFactory
 from application.tests.factories.user import UserFactory
+from application.tests.factories.user_reset_password import UserResetPasswordFactory
 
 
 @pytest.fixture
@@ -58,31 +58,14 @@ def test_send_reset_password_mail_user_does_not_exist(
     """ユーザが存在しない時はパスワード再設定メールを送信できないことを確認"""
 
     # 存在しない社員番号に変更
-    post_send_reset_password_mail_data["employee_number"] = "12345678"
+    post_send_reset_password_mail_data["email"] = "non_existing_user@email.com"
     response = client.post(
         get_send_reset_password_mail_url,
         post_send_reset_password_mail_data,
         format="json",
     )
     assert response.status_code == status.HTTP_200_OK
-
-
-@pytest.mark.django_db
-def test_send_reset_password_mail_user_does_not_exist(
-    client,
-    get_send_reset_password_mail_url,
-    post_send_reset_password_mail_data,
-):
-    """ユーザが存在しない時はパスワード再設定メールを送信できないことを確認"""
-
-    # 存在しない社員番号に変更)
-    post_send_reset_password_mail_data["employee_number"] = "12345678"
-    response = client.post(
-        get_send_reset_password_mail_url,
-        post_send_reset_password_mail_data,
-        format="json",
-    )
-    assert response.status_code == status.HTTP_200_OK
+    assert len(mail.outbox) == 0
 
 
 @pytest.mark.django_db
@@ -94,15 +77,14 @@ def test_send_reset_password_mail_user_is_not_active(
     """ユーザが無効化されている時はパスワード再設定メールを送信できないことを確認"""
 
     user = UserFactory(is_active=False)
-    post_send_reset_password_mail_data[
-        "employee_number"
-    ] = user.employee_number
+    post_send_reset_password_mail_data["email"] = user.email
     response = client.post(
         get_send_reset_password_mail_url,
         post_send_reset_password_mail_data,
         format="json",
     )
     assert response.status_code == status.HTTP_200_OK
+    assert len(mail.outbox) == 0
 
 
 @pytest.mark.django_db
@@ -114,9 +96,7 @@ def test_send_reset_password_mail_user_is_not_verified(
     """ユーザの認証が完了されている時はパスワード再設定メールを送信できないことを確認"""
 
     user = UserFactory(is_verified=False)
-    post_send_reset_password_mail_data[
-        "employee_number"
-    ] = user.employee_number
+    post_send_reset_password_mail_data["email"] = user.email
     response = client.post(
         get_send_reset_password_mail_url,
         post_send_reset_password_mail_data,

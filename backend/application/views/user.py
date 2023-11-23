@@ -33,6 +33,7 @@ from project.settings.environment import django_settings
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
+    application_logger = getLogger(LoggerName.APPLICATION.value)
     emergency_logger = getLogger(LoggerName.EMERGENCY.value)
 
     def get_serializer_class(self):
@@ -62,7 +63,7 @@ class UserViewSet(ModelViewSet):
             "invite_user",
         }:
             permission_classes = [IsManagementUser]
-        elif self.action in {"reset_password","send_reset_password_email"}:
+        elif self.action in {"reset_password", "send_reset_password_email"}:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
@@ -287,10 +288,15 @@ class UserViewSet(ModelViewSet):
             user = User.objects.get(
                 email=serializer.validated_data["email"],
             )
-        except User.DoesNotExist:
+        except User.DoesNotExist as e:
+            self.emergency_logger.error(e)
             return JsonResponse(
-                data={"msg": "指定されたユーザは見つかりませんでした"},
-                status=status.HTTP_404_NOT_FOUND,
+                data={},
+            )
+        if not user.is_active or not user.is_verified:
+            self.application_logger.warning("ユーザは有効化済みまたは認証済みです")
+            return JsonResponse(
+                data={},
             )
         try:
             token = secrets.token_urlsafe(64)
@@ -303,8 +309,7 @@ class UserViewSet(ModelViewSet):
         except DatabaseError as e:
             self.emergency_logger.error(e)
             return JsonResponse(
-                data={"msg": "パスワード再設定に失敗しました"},
-                status=status.HTTP_400_BAD_REQUEST,
+                data={},
             )
         base_url = django_settings.BASE_URL
         url = base_url + "/reset-password/" + token
