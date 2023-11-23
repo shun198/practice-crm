@@ -18,29 +18,29 @@ def client(scope="session"):
 
 
 @pytest.fixture
-def management_user(user_password):
+def management_user(password):
     return UserFactory(
-        password=user_password,
+        password=password,
         role=User.Role.MANAGEMENT,
     )
 
 
 @pytest.fixture
-def general_user(user_password):
+def general_user(password):
     return UserFactory(
-        password=user_password,
+        password=password,
         role=User.Role.GENERAL,
     )
 
 
 @pytest.fixture
-def part_time_user(user_password):
+def part_time_user(password):
     return UserFactory(
-        password=user_password,
+        password=password,
         role=User.Role.PART_TIME,
     )
 
 
 @pytest.fixture
-def user_password():
+def password():
     return "test"

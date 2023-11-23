@@ -14,14 +14,14 @@ def get_logout_url():
 
 @pytest.mark.django_db
 def test_management_user_can_login(
-    client, management_user, user_password, get_login_url
+    client, management_user, password, get_login_url
 ):
     """管理者ユーザで正常にログインできることをテスト"""
     response = client.post(
         get_login_url,
         {
             "employee_number": management_user.employee_number,
-            "password": user_password,
+            "password": password,
         },
         format="json",
     )
@@ -30,15 +30,13 @@ def test_management_user_can_login(
 
 
 @pytest.mark.django_db
-def test_general_user_can_login(
-    client, general_user, user_password, get_login_url
-):
+def test_general_user_can_login(client, general_user, password, get_login_url):
     """一般ユーザで正常にログインできることをテスト"""
     response = client.post(
         get_login_url,
         {
             "employee_number": general_user.employee_number,
-            "password": user_password,
+            "password": password,
         },
         format="json",
     )
@@ -48,14 +46,14 @@ def test_general_user_can_login(
 
 @pytest.mark.django_db
 def test_part_time_user_can_login(
-    client, part_time_user, user_password, get_login_url
+    client, part_time_user, password, get_login_url
 ):
     """アルバイトユーザで正常にログインできることをテスト"""
     response = client.post(
         get_login_url,
         {
             "employee_number": part_time_user.employee_number,
-            "password": user_password,
+            "password": password,
         },
         format="json",
     )
@@ -98,14 +96,14 @@ def test_user_cannot_login_without_password(
 
 @pytest.mark.django_db
 def test_user_cannot_login_without_employee_number(
-    client, user_password, get_login_url
+    client, password, get_login_url
 ):
     """社員番号なしでログインできないことをテスト"""
     response = client.post(
         get_login_url,
         {
             "employee_number": None,
-            "password": user_password,
+            "password": password,
         },
         format="json",
     )
@@ -114,14 +112,14 @@ def test_user_cannot_login_without_employee_number(
 
 @pytest.mark.django_db
 def test_user_cannot_login_with_employee_number_that_does_not_exist(
-    client, user_password, get_login_url
+    client, password, get_login_url
 ):
     """存在しない社員番号でログインできないことをテスト"""
     response = client.post(
         get_login_url,
         {
             "employee_number": "12345678",
-            "password": user_password,
+            "password": password,
         },
         format="json",
     )
@@ -129,15 +127,13 @@ def test_user_cannot_login_with_employee_number_that_does_not_exist(
 
 
 @pytest.mark.django_db
-def test_user_can_logout(
-    client, management_user, user_password, get_logout_url
-):
+def test_user_can_logout(client, management_user, password, get_logout_url):
     """正常にログアウトできることをテスト"""
     response = client.post(
         get_login_url,
         {
             "employee_number": management_user.employee_number,
-            "password": user_password,
+            "password": password,
         },
         format="json",
     )

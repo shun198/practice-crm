@@ -29,3 +29,4 @@ class UserFactory(DjangoModelFactory):
         date_start=(datetime.now() - timedelta(days=20)).date(),
         date_end=datetime.now(),
     )
+    is_verified = True

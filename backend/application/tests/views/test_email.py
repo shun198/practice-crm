@@ -23,13 +23,13 @@ def email_data():
 def test_management_user_can_send_invite_user_email(
     client,
     management_user,
-    user_password,
+    password,
     send_invite_user_mail_url,
     email_data,
 ):
     """管理者ユーザで正常に招待メールを送信できることをテスト"""
     client.login(
-        employee_number=management_user.employee_number, password=user_password
+        employee_number=management_user.employee_number, password=password
     )
     response = client.post(
         send_invite_user_mail_url, email_data, format="json"
@@ -40,11 +40,11 @@ def test_management_user_can_send_invite_user_email(
 
 @pytest.mark.django_db()
 def test_general_user_cannot_send_invite_user_email(
-    client, general_user, user_password, send_invite_user_mail_url, email_data
+    client, general_user, password, send_invite_user_mail_url, email_data
 ):
     """一般ユーザで正常に招待メールを送信できないことをテスト"""
     client.login(
-        employee_number=general_user.employee_number, password=user_password
+        employee_number=general_user.employee_number, password=password
     )
     response = client.post(
         send_invite_user_mail_url, email_data, format="json"
@@ -56,13 +56,13 @@ def test_general_user_cannot_send_invite_user_email(
 def test_part_time_user_cannot_send_invite_user_email(
     client,
     part_time_user,
-    user_password,
+    password,
     send_invite_user_mail_url,
     email_data,
 ):
     """アルバイトユーザで招待メールを送信できないことをテスト"""
     client.login(
-        employee_number=part_time_user.employee_number, password=user_password
+        employee_number=part_time_user.employee_number, password=password
     )
     response = client.post(
         send_invite_user_mail_url, email_data, format="json"

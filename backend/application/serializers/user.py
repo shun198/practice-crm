@@ -9,7 +9,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "employee_number", "username", "email", "role"]
+        fields = [
+            "id",
+            "employee_number",
+            "username",
+            "email",
+            "role",
+            "is_verified",
+        ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
     def to_representation(self, instance):
