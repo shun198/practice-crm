@@ -1,7 +1,27 @@
+from collections import OrderedDict
+
 import pytest
 
 from application.models import User
 from application.serializers.user import UserSerializer
+
+
+@pytest.mark.django_db
+def test_user_serializer_to_representation(management_user):
+    """to_representationで設定した形式で取得できる事を確認する"""
+
+    serializer = UserSerializer(instance=management_user)
+    expected = OrderedDict(
+        [
+            ("id", str(management_user.id)),
+            ("employee_number", management_user.employee_number),
+            ("username", management_user.username),
+            ("email", management_user.email),
+            ("role", management_user.get_role_display()),
+        ]
+    )
+
+    assert serializer.to_representation(serializer.instance) == expected
 
 
 @pytest.fixture

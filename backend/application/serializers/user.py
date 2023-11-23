@@ -12,6 +12,11 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["id", "employee_number", "username", "email", "role"]
         read_only_fields = ["id", "created_at", "updated_at"]
 
+    def to_representation(self, instance):
+        rep = super(UserSerializer, self).to_representation(instance)
+        rep["role"] = instance.get_role_display()
+        return rep
+
 
 class LoginSerializer(serializers.ModelSerializer):
     """ログイン用シリアライザ"""

@@ -20,9 +20,9 @@ class User(AbstractUser):
             PART_TIME(2):  アルバイト
         """
 
-        MANAGEMENT = 0
-        GENERAL = 1
-        PART_TIME = 2
+        MANAGEMENT = 0, "管理者"
+        GENERAL = 1, "一般"
+        PART_TIME = 2, "アルバイト"
 
     # 不要なフィールドはNoneにすることができる
     first_name = None

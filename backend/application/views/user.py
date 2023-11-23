@@ -16,7 +16,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from application.emails import send_invitation_email, send_reset_email
 from application.models.user import User, UserInvitation, UserResetPassword
-from application.permissions import IsGeneralUser, IsManagementUser
+from application.permissions import IsManagementUser
 from application.serializers.user import (
     ChangePasswordSerializer,
     CheckTokenSerializer,
@@ -62,8 +62,6 @@ class UserViewSet(ModelViewSet):
             "invite_user",
         }:
             permission_classes = [IsManagementUser]
-        elif self.action == "create":
-            permission_classes = [IsGeneralUser]
         elif self.action == "send_reset_password_email":
             permission_classes = [AllowAny]
         else:
