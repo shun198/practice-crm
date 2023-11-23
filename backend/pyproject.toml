@@ -47,6 +47,7 @@ isort = "^5.11.4"
 django-extensions = "^3.2.1"
 pdoc = "^13.0.0"
 pytest-github-actions-annotate-failures = "^0.2.0"
+freezegun = "^1.2.2"
 
 [tool.isort]
 profile = "black"

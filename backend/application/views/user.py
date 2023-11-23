@@ -62,7 +62,7 @@ class UserViewSet(ModelViewSet):
             "invite_user",
         }:
             permission_classes = [IsManagementUser]
-        elif self.action == "send_reset_password_email":
+        elif self.action in {"reset_password","send_reset_password_email"}:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
@@ -195,27 +195,17 @@ class UserViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            user_invitation_password = UserInvitation.objects.get(
-                token=serializer.validated_data["token"]
-            )
-        except UserInvitation.DoesNotExist:
-            return JsonResponse(
-                data={"msg": "無効なURLです"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        if (
-            user_invitation_password.expiry is not None
-            and user_invitation_password.expiry < timezone.now()
-        ):
+        user_invitation = self._check_invitation(serializer.data["token"])
+        if user_invitation is None:
             return JsonResponse(
                 data={"msg": "こちらのURLは有効期限切れです"},
-                status=status.HTTP_404_NOT_FOUND,
+                status=status.HTTP_400_BAD_REQUEST,
             )
         try:
             with transaction.atomic():
-                user = user_invitation_password.user
+                user_invitation.is_used = True
+                user_invitation.save()
+                user = user_invitation.user
                 user.is_verified = True
                 user.set_password(serializer.validated_data["new_password"])
                 user.save()
@@ -253,27 +243,25 @@ class UserViewSet(ModelViewSet):
             ]
         """
         try:
-            user = User.objects.get(pk=pk)
-        except User.DoesNotExist:
+            user_invitation = UserInvitation.objects.select_related(
+                "user"
+            ).get(user_id=pk)
+        except UserInvitation.DoesNotExist:
             return JsonResponse(
                 data={"msg": "指定されたユーザは見つかりませんでした"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        if user.is_verified:
+        if user_invitation.user.is_verified:
             return JsonResponse(
                 data={"msg": "指定されたユーザは認証済です"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        token = secrets.token_urlsafe(64)
-        expiry = timezone.now() + timedelta(days=1)
-        UserInvitation.objects.create(
-            token=token,
-            user=user,
-            expiry=expiry,
-        )
+        user_invitation.token = secrets.token_urlsafe()
+        user_invitation.expiry = timezone.now() + timedelta(days=1)
+        user_invitation.save()
         base_url = django_settings.BASE_URL
-        # 初回登録用のURLへ遷移
-        url = base_url + "/verify-user/" + token
+        user = user_invitation.user
+        url = base_url + "/verify-user/" + user_invitation.token
         send_invitation_email(
             email=user.email,
             url=url,
@@ -341,29 +329,20 @@ class UserViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        try:
-            user_reset_password = UserResetPassword.objects.get(
-                token=serializer.validated_data["token"]
-            )
-        except UserResetPassword.DoesNotExist:
-            return JsonResponse(
-                data={"msg": "無効なURLです"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        if (
-            user_reset_password.expiry is not None
-            and user_reset_password.expiry < timezone.now()
-        ):
+        user_reset_password = self._check_reset_password(
+            serializer.data["token"]
+        )
+        if user_reset_password is None:
             return JsonResponse(
                 data={"msg": "こちらのURLは有効期限切れです"},
-                status=status.HTTP_404_NOT_FOUND,
+                status=status.HTTP_400_BAD_REQUEST,
             )
         try:
             with transaction.atomic():
                 user = user_reset_password.user
                 user.set_password(serializer.validated_data["new_password"])
+                user_reset_password.is_used = True
+                user_reset_password.save()
                 user.save()
         except DatabaseError as e:
             self.emergency_logger.error(e)

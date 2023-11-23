@@ -110,6 +110,10 @@ class UserResetPassword(models.Model):
         related_name="user_password_reset",
         db_comment="ユーザテーブル外部キー",
     )
+    is_used = models.BooleanField(
+        default=False,
+        db_comment="使用有無",
+    )
 
     class Meta:
         db_table = "PasswordReset"
@@ -143,6 +147,10 @@ class UserInvitation(models.Model):
         on_delete=models.PROTECT,
         related_name="user_invitation",
         db_comment="社員テーブル外部キー",
+    )
+    is_used = models.BooleanField(
+        default=False,
+        db_comment="使用有無",
     )
 
     class Meta:
