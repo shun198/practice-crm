@@ -13,7 +13,6 @@ class UserFilter(django_filters.FilterSet):
         model = User
         fields = {
             "email": ["contains"],
-            "phone_number": ["startswith"],
             "role": ["in"],
         }
 
@@ -27,8 +26,7 @@ class CustomerFilter(django_filters.FilterSet):
         fields = {
             "birthday": ["exact"],
             "email": ["contains"],
-            "phone_number": ["startswith"],
-            "role": ["in"],
+            "phone_no": ["startswith"],
         }
 
     def search_name(self, queryset, name, value):
