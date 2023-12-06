@@ -7,25 +7,38 @@ from django.db import models
 class Customer(models.Model):
     """お客様"""
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    kana = models.CharField(max_length=255)
-    """カナ氏名"""
-    name = models.CharField(max_length=255)
-    """氏名"""
-    birthday = models.DateField()
-    """誕生日"""
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        db_comment="ID",
+    )
+    kana = models.CharField(
+        max_length=255,
+        db_comment="カナ氏名",
+    )
+    name = models.CharField(
+        max_length=255,
+        db_comment="氏名",
+    )
+    birthday = models.DateField(
+        db_comment="誕生日",
+    )
+    email = models.EmailField(
+        db_comment="メールアドレス",
+    )
     phone_no = models.CharField(
         max_length=11,
         validators=[RegexValidator(r"^[0-9]{11}$", "11桁の数字を入力してください。")],
         blank=True,
+        db_comment="電話番号",
     )
-    """電話番号"""
-    address = models.ForeignKey(
+    address = models.OneToOneField(
         "Address",
         on_delete=models.CASCADE,
         related_name="address",
+        db_comment="住所のFK",
     )
-    """住所"""
 
     class Meta:
         db_table = "Customer"

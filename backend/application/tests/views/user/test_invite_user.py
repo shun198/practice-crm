@@ -1,5 +1,4 @@
 import pytest
-
 from django.core import mail
 from django.db import DatabaseError
 from rest_framework import status
@@ -100,7 +99,9 @@ def test_invite_user_save_user_transaction_database_error_false(
         format="json",
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert not User.objects.filter(employee_number=post_invite_user_data["employee_number"]).exists()
+    assert not User.objects.filter(
+        employee_number=post_invite_user_data["employee_number"]
+    ).exists()
     assert len(mail.outbox) == 0
 
 
@@ -125,5 +126,7 @@ def test_invite_user_save_user_invitation_transaction_database_error_false(
         format="json",
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert not User.objects.filter(employee_number=post_invite_user_data["employee_number"]).exists()
+    assert not User.objects.filter(
+        employee_number=post_invite_user_data["employee_number"]
+    ).exists()
     assert len(mail.outbox) == 0

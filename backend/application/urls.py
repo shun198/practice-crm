@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework_nested import routers
 
+from application.views.customer import CustomerViewSet
 from application.views.health_check import health_check
 from application.views.login import LoginViewSet
 from application.views.product import ProductViewSet
@@ -10,6 +11,7 @@ from application.views.user import UserViewSet
 router = routers.DefaultRouter()
 router.register(r"", LoginViewSet, basename="login")
 router.register(r"users", UserViewSet, basename="user")
+router.register(r"customers", CustomerViewSet, basename="customer")
 router.register(r"", SmsViewSet, basename="sms")
 router.register(r"product", ProductViewSet, basename="product")
 
