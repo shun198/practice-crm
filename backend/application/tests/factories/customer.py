@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
 
 import factory
-from factory import Faker, Sequence, SubFactory
-
 from application.models import Address, Customer
+from factory import Faker, Sequence, SubFactory
 
 
 class AddressFactory(factory.django.DjangoModelFactory):
@@ -32,5 +31,6 @@ class CustomerFactory(factory.django.DjangoModelFactory):
         date_start=(datetime.now().date() - timedelta(days=365 * 50)),
         date_end=(datetime.now().date() - timedelta(days=365 * 20)),
     )
+    email = Faker("email")
     phone_no = Sequence(lambda n: f"080" + "{0:08}".format(n + 100))
     address = SubFactory(AddressFactory)
