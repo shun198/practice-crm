@@ -1,10 +1,13 @@
 import django_filters
-from application.models import Customer, User
 from django.db.models import Q
 from django.db.models.functions import Concat
 
+from application.models import Customer, User
+
 
 class UserFilter(django_filters.FilterSet):
+    """システムユーザのfilter"""
+
     created_at = django_filters.DateTimeFromToRangeFilter()
 
     class Meta:
@@ -17,6 +20,8 @@ class UserFilter(django_filters.FilterSet):
 
 
 class CustomerFilter(django_filters.FilterSet):
+    """お客様のfilter"""
+
     name = django_filters.CharFilter(method="search_name")
     address = django_filters.CharFilter(method="search_address")
 

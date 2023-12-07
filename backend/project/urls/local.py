@@ -1,6 +1,6 @@
 """Dev環境用のURL"""
 
-from django.urls import path
+from django.urls import include, path
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularRedocView,
@@ -10,6 +10,7 @@ from drf_spectacular.views import (
 from project.urls.base import urlpatterns
 
 urlpatterns += [
+    path("__debug__/", include("debug_toolbar.urls")),
     # Swagger
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

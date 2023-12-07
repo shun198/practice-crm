@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
 
-import factory
-from application.models import Address, Customer
 from factory import Faker, Sequence, SubFactory
+from factory.django import DjangoModelFactory
+
+from application.models import Address, Customer
 
 
-class AddressFactory(factory.django.DjangoModelFactory):
+class AddressFactory(DjangoModelFactory):
     class Meta:
         model = Address
 
@@ -20,7 +21,7 @@ class AddressFactory(factory.django.DjangoModelFactory):
     post_no = Faker("random_number", digits=7)
 
 
-class CustomerFactory(factory.django.DjangoModelFactory):
+class CustomerFactory(DjangoModelFactory):
     class Meta:
         model = Customer
 
