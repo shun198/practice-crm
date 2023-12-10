@@ -3,6 +3,8 @@ import uuid
 from django.core.validators import RegexValidator
 from django.db import models
 
+from application.models.user import User
+
 
 class Customer(models.Model):
     """お客様"""
@@ -38,6 +40,26 @@ class Customer(models.Model):
         on_delete=models.CASCADE,
         related_name="address",
         db_comment="住所のFK",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        db_comment="作成日時",
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+        db_comment="更新日時",
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        related_name="%(class)s_created_by",
+        db_comment="作成者ID",
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        related_name="%(class)s_updated_by",
+        db_comment="更新者ID",
     )
 
     class Meta:

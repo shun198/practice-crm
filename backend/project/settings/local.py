@@ -35,7 +35,7 @@ INTERNAL_IPS = [
 
 DEBUG_TOOLBAR_CONFIG = {
     # ツールバーを表示させる
-    "SHOW_TOOLBAR_CALLBACK" : lambda request: True,
+    "SHOW_TOOLBAR_CALLBACK": lambda request: True,
 }
 
 ROOT_URLCONF = "project.urls.local"
