@@ -14,6 +14,15 @@ export const BasicMenu = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const onSubmitCustomerList = () => {
+    router.push("/customers");
+  };
+
+  const onSubmitUserList = () => {
+    router.push("/users");
+  };
+
   const onSubmitLogout = async () => {
     const apiUrl = "http://localhost/back/api/logout/";
     const csrftoken = Cookies.get("csrftoken") || "";
@@ -55,7 +64,8 @@ export const BasicMenu = () => {
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem onClick={onSubmitLogout}>ユーザ一覧へ</MenuItem>
+        <MenuItem onClick={onSubmitCustomerList}>お客様一覧へ</MenuItem>
+        <MenuItem onClick={onSubmitUserList}>ユーザ一覧へ</MenuItem>
         <MenuItem onClick={onSubmitLogout}>ログアウト</MenuItem>
       </Menu>
     </div>

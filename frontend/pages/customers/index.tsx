@@ -7,17 +7,18 @@ import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import { BasicMenu } from "@/components/buttons/MenuButton";
+import { Button } from "@mui/material";
 
-type ProductData = {
+type CustomerData = {
   name: string;
   details: string;
   price: number;
 };
 
-type ProductArray = ProductData[];
+type CustomerArray = CustomerData[];
 
-function ProductList() {
-  const [data, setData] = useState<ProductArray>([]);
+function CustomerList() {
+  const [data, setData] = useState<CustomerArray>([]);
   const [loggedIn, setLoggedIn] = useState<Boolean>(true); // ログイン状態を管理
 
   useEffect(() => {
@@ -44,7 +45,7 @@ function ProductList() {
           alert("エラーが発生しました");
         }
       })
-      .then((data: ProductArray) => {
+      .then((data: CustomerArray) => {
         setData(data);
       })
       .catch((error) => {
@@ -61,7 +62,7 @@ function ProductList() {
   if (!data || !data.results) return null;
 
   return (
-    <div className="product-list">
+    <div className="customer-list">
       <BasicMenu />
       <br />
       <div>
@@ -89,6 +90,7 @@ function ProductList() {
               <TableCell align="center" className="font-bold">
                 担当者
               </TableCell>
+              <TableCell align="center" className="font-bold"></TableCell>
             </TableRow>
           </TableHead>
           {data.results.map((item, index) => {
@@ -100,6 +102,15 @@ function ProductList() {
                 <TableCell align="center">{item.email}</TableCell>
                 <TableCell align="center">{item.phone_no}</TableCell>
                 <TableCell align="center">{item.updated_by}</TableCell>
+                <TableCell align="center">
+                  <Button
+                    size="small"
+                    variant="contained"
+                    className="w-[100px] my-[10px]"
+                  >
+                    詳細
+                  </Button>
+                </TableCell>
               </TableBody>
             );
           })}
@@ -109,4 +120,4 @@ function ProductList() {
   );
 }
 
-export default ProductList;
+export default CustomerList;
