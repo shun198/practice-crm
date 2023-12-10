@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import Cookies from "js-cookie";
 import router from "next/router";
-import { Button } from "@mui/material";
-import { TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
+import { ForgotPassword } from "../elements/ForgotPassword";
 
 function LoginReactHookForm() {
   type FormData = {
@@ -40,7 +41,6 @@ function LoginReactHookForm() {
 
     if (response.ok) {
       // ログイン成功
-      console.log("ログイン成功");
       router.push("/customers");
       // リダイレクトなど、ログイン後の処理を追加
     } else {
@@ -54,7 +54,7 @@ function LoginReactHookForm() {
 
   return (
     <div className="Login">
-      <h1 className="flex flex-col items-center my-[10px] text-3xl text-gray-900">
+      <h1 className="flex justify-center my-[10px] text-3xl text-gray-900">
         練習用アプリ
       </h1>
       <form
@@ -79,7 +79,7 @@ function LoginReactHookForm() {
             })}
           />
           {errors.employee_number?.message && (
-            <div>{errors.employee_number.message}</div>
+            <div className="text-red-500">{errors.employee_number.message}</div>
           )}
         </div>
         <div>
@@ -100,7 +100,9 @@ function LoginReactHookForm() {
               // },
             })}
           />
-          {errors.password?.message && <div>{errors.password.message}</div>}
+          {errors.password?.message && (
+            <div className="text-red-500">{errors.password.message}</div>
+          )}
         </div>
         <Button
           type="submit"
@@ -111,6 +113,7 @@ function LoginReactHookForm() {
         >
           ログイン
         </Button>
+        <ForgotPassword />
       </form>
     </div>
   );

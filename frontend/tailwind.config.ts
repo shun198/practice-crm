@@ -16,4 +16,12 @@ const config: Config = {
   },
   plugins: [],
 };
+// https://asunaroblog.net/blog/641d6dacb5b671fd6673b3c5
+// https://tailwindcss.com/docs/preflight#disabling-preflight
+// module.exports = {
+//   // 省略
+//   corePlugins: {
+//     preflight: false,
+//   },
+// }
 export default config;

@@ -43,7 +43,7 @@ export const BasicMenu = () => {
   };
 
   return (
-    <div>
+    <div className="grid justify-items-end">
       <Button
         id="basic-button"
         aria-controls={open ? "basic-menu" : undefined}
@@ -52,6 +52,7 @@ export const BasicMenu = () => {
         onClick={handleClick}
         variant="contained"
         color="inherit"
+        size="large"
       >
         メニュー
       </Button>

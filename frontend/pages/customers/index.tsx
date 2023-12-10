@@ -65,10 +65,21 @@ function CustomerList() {
     <div className="customer-list">
       <BasicMenu />
       <br />
+      <div className="flex flex-col items-center my-[10px]">
+        <h1 className="text-3xl text-gray-900">お客様情報一覧</h1>
+      </div>
+      <div className="flex flex-col items-end my-[10px]">
+        <Button
+          type="submit"
+          size="medium"
+          variant="contained"
+          color="primary"
+          className="grid justify-items-end w-[200px] my-[20px]"
+        >
+          お客様登録
+        </Button>
+      </div>
       <div>
-        <h1 className="flex flex-col items-center my-[10px] text-3xl text-gray-900">
-          お客様情報一覧
-        </h1>
         <Table>
           <TableHead>
             <TableRow>
@@ -107,6 +118,7 @@ function CustomerList() {
                     size="small"
                     variant="contained"
                     className="w-[100px] my-[10px]"
+                    onClick={() => router.push(`/customers/${item.id}`)}
                   >
                     詳細
                   </Button>

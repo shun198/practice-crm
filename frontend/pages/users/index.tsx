@@ -21,7 +21,6 @@ type UserArray = UserData[];
 function UserList() {
   const [data, setData] = useState<UserArray>([]);
   const [loggedIn, setLoggedIn] = useState<Boolean>(true); // ログイン状態を管理
-  const [checked, setChecked] = useState<Boolean>(false);
 
   useEffect(() => {
     // データを取得するためのAPIのURLを指定
