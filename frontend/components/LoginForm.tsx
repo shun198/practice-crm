@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import Cookies from 'js-cookie';
 import router from 'next/router';
+import { Button } from '@mui/material';
 
 function LoginReactHookForm() {
 
@@ -88,7 +89,7 @@ function LoginReactHookForm() {
           />
             {errors.password?.message && <div>{errors.password.message}</div>}
         </div>
-        <button type="submit">ログイン</button>
+        <Button type="submit">ログイン</Button>
       </form>
     </div>
   );
