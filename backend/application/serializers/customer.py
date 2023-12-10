@@ -1,6 +1,7 @@
-from application.models import Customer
 from django.utils import timezone
 from rest_framework import serializers
+
+from application.models import Customer
 
 
 class ListCustomerSerializer(serializers.ModelSerializer):
@@ -17,11 +18,17 @@ class ListCustomerSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_by",
         ]
-        read_only_fields = ["id", "created_at","updated_by",]
+        read_only_fields = [
+            "id",
+            "created_at",
+            "updated_by",
+        ]
 
     def to_representation(self, instance):
         rep = super(ListCustomerSerializer, self).to_representation(instance)
-        rep["created_at"] = timezone.localtime(instance.created_at).strftime("%Y/%m/%d")
+        rep["created_at"] = timezone.localtime(instance.created_at).strftime(
+            "%Y/%m/%d"
+        )
         rep["updated_by"] = instance.updated_by.username
         return rep
 
