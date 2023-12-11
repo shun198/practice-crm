@@ -3,17 +3,16 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
 type CustomerDetailData = {
-    id: number;
-    name: string;
-    kana: string;
-    birthday: Date;
-    email: string;
-    phone_no: string;
-    address: string;
-    post_no: string;
-    updated_by: string;
-  };
-
+  id: number;
+  name: string;
+  kana: string;
+  birthday: Date;
+  email: string;
+  phone_no: string;
+  address: string;
+  post_no: string;
+  updated_by: string;
+};
 
 function CustomerDetail() {
   const router = useRouter();
@@ -50,7 +49,7 @@ function CustomerDetail() {
     };
 
     if (router.isReady) {
-        fetchData();
+      fetchData();
     }
   }, [router]);
 
@@ -61,7 +60,7 @@ function CustomerDetail() {
   }, [loggedIn]);
 
   if (!data) return null;
-  
+
   return (
     <div className="customer-details">
       <h1>お客様詳細</h1>
@@ -72,7 +71,7 @@ function CustomerDetail() {
       <div>{data.phone_no}</div>
       <div>{data.address}</div>
       <div>{data.post_no}</div>
-        {/* 担当者 */}
+      {/* 担当者 */}
       <div>{data.updated_by}</div>
     </div>
   );
