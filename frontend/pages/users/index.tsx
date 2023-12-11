@@ -11,9 +11,13 @@ import { Switch, Button } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
 type UserData = {
-  name: string;
-  details: string;
-  price: number;
+  id: number;
+  employee_number: string;
+  username: string;
+  email: string;
+  role: string;
+  is_active: boolean;
+  is_verified: boolean;
 };
 
 type UserArray = UserData[];
@@ -22,41 +26,41 @@ function UserList() {
   const [data, setData] = useState<UserArray>([]);
   const [loggedIn, setLoggedIn] = useState<Boolean>(true); // ログイン状態を管理
 
-  useEffect(() => {
-    // データを取得するためのAPIのURLを指定
-    const apiUrl = "http://localhost/back/api/users/";
-    const csrftoken = Cookies.get("csrftoken") || "";
-    const credentials = "include";
+  const fetchData = async () => {
+    try {
+      const apiUrl = "http://localhost/back/api/users/";
+      const csrftoken = Cookies.get("csrftoken") || "";
+      const credentials = "include";
 
-    fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "X-CSRFToken": csrftoken,
-      },
-      credentials: credentials,
-    })
-      .then((response) => {
-        if (response.ok) {
-          // ステータスコードが200の場合、JSONデータを取得
-          setLoggedIn(true);
-          return response.json();
-        } else if (response.status === 403) {
-          setLoggedIn(false); // ログインしていない状態をセット
-        } else {
-          alert("エラーが発生しました");
-        }
-      })
-      .then((data: UserArray) => {
-        setData(data);
-      })
-      .catch((error) => {
-        console.error("データの取得に失敗しました:", error);
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "X-CSRFToken": csrftoken,
+        },
+        credentials: credentials,
       });
+
+      if (response.ok) {
+        const responseData: UserArray = await response.json();
+        setData(responseData);
+        setLoggedIn(true);
+      } else if (response.status === 403) {
+        setLoggedIn(false);
+      } else {
+        alert("エラーが発生しました");
+      }
+    } catch (error) {
+      console.error("データの取得に失敗しました:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   useEffect(() => {
     if (!loggedIn) {
-      router.push("/"); // ログインしていない場合にルートページにリダイレクト
+      router.push("/");
     }
   }, [loggedIn]);
 
@@ -94,40 +98,38 @@ function UserList() {
               <TableCell align="center" className="font-bold"></TableCell>
             </TableRow>
           </TableHead>
-          {data.results.map((item, index) => {
-            return (
-              <TableBody key={index}>
-                <TableCell align="center">{item.employee_number}</TableCell>
-                <TableCell align="center">{item.username}</TableCell>
-                <TableCell align="center">{item.email}</TableCell>
-                <TableCell align="center">{item.role}</TableCell>
-                <TableCell align="center">
-                  <Switch checked={item.is_active} />
-                </TableCell>
-                <TableCell align="center">
-                  <Button
-                    disabled={!item.is_active || item.is_verified}
-                    size="small"
-                    variant="contained"
-                    color="success"
-                    className="w-[100px] my-[10px]"
-                  >
-                    再送信
-                    <SendIcon />
-                  </Button>
-                </TableCell>
-                <TableCell align="center">
-                  <Button
-                    size="small"
-                    variant="contained"
-                    className="w-[100px] my-[10px]"
-                  >
-                    編集
-                  </Button>
-                </TableCell>
-              </TableBody>
-            );
-          })}
+          {data.results.map((item, index) => (
+            <TableBody key={index}>
+              <TableCell align="center">{item.employee_number}</TableCell>
+              <TableCell align="center">{item.username}</TableCell>
+              <TableCell align="center">{item.email}</TableCell>
+              <TableCell align="center">{item.role}</TableCell>
+              <TableCell align="center">
+                <Switch checked={item.is_active} />
+              </TableCell>
+              <TableCell align="center">
+                <Button
+                  disabled={!item.is_active || item.is_verified}
+                  size="small"
+                  variant="contained"
+                  color="success"
+                  className="w-[100px] my-[10px]"
+                >
+                  再送信
+                  <SendIcon />
+                </Button>
+              </TableCell>
+              <TableCell align="center">
+                <Button
+                  size="small"
+                  variant="contained"
+                  className="w-[100px] my-[10px]"
+                >
+                  編集
+                </Button>
+              </TableCell>
+            </TableBody>
+          ))}
         </Table>
       </div>
     </div>

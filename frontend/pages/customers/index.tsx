@@ -10,9 +10,11 @@ import { BasicMenu } from "@/components/buttons/MenuButton";
 import { Button } from "@mui/material";
 
 type CustomerData = {
+  id: number;
+  created_at: string;
   name: string;
-  details: string;
-  price: number;
+  kana: string;
+  updated_by: string;
 };
 
 type CustomerArray = CustomerData[];
@@ -21,41 +23,41 @@ function CustomerList() {
   const [data, setData] = useState<CustomerArray>([]);
   const [loggedIn, setLoggedIn] = useState<Boolean>(true); // ログイン状態を管理
 
-  useEffect(() => {
-    // データを取得するためのAPIのURLを指定
-    const apiUrl = "http://localhost/back/api/customers/";
-    const csrftoken = Cookies.get("csrftoken") || "";
-    const credentials = "include";
+  const fetchData = async () => {
+    try {
+      const apiUrl = "http://localhost/back/api/customers/";
+      const csrftoken = Cookies.get("csrftoken") || "";
+      const credentials = "include";
 
-    fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "X-CSRFToken": csrftoken,
-      },
-      credentials: credentials,
-    })
-      .then((response) => {
-        if (response.ok) {
-          // ステータスコードが200の場合、JSONデータを取得
-          setLoggedIn(true);
-          return response.json();
-        } else if (response.status === 403) {
-          setLoggedIn(false); // ログインしていない状態をセット
-        } else {
-          alert("エラーが発生しました");
-        }
-      })
-      .then((data: CustomerArray) => {
-        setData(data);
-      })
-      .catch((error) => {
-        console.error("データの取得に失敗しました:", error);
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          "X-CSRFToken": csrftoken,
+        },
+        credentials: credentials,
       });
+
+      if (response.ok) {
+        const responseData: CustomerArray = await response.json();
+        setData(responseData);
+        setLoggedIn(true);
+      } else if (response.status === 403) {
+        setLoggedIn(false);
+      } else {
+        alert("エラーが発生しました");
+      }
+    } catch (error) {
+      console.error("データの取得に失敗しました:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   useEffect(() => {
     if (!loggedIn) {
-      router.push("/"); // ログインしていない場合にルートページにリダイレクト
+      router.push("/");
     }
   }, [loggedIn]);
 
@@ -92,12 +94,7 @@ function CustomerList() {
               <TableCell align="center" className="font-bold">
                 お客様カナ氏名
               </TableCell>
-              <TableCell align="center" className="font-bold">
-                メールアドレス
-              </TableCell>
-              <TableCell align="center" className="font-bold">
-                電話番号
-              </TableCell>
+              {/* 他のセルのヘッダーも同様に追加 */}
               <TableCell align="center" className="font-bold">
                 担当者
               </TableCell>
@@ -110,8 +107,7 @@ function CustomerList() {
                 <TableCell align="center">{item.created_at}</TableCell>
                 <TableCell align="center">{item.name}</TableCell>
                 <TableCell align="center">{item.kana}</TableCell>
-                <TableCell align="center">{item.email}</TableCell>
-                <TableCell align="center">{item.phone_no}</TableCell>
+                {/* 他のセルも同様に追加 */}
                 <TableCell align="center">{item.updated_by}</TableCell>
                 <TableCell align="center">
                   <Button

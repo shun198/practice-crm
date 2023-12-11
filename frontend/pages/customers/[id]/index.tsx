@@ -1,59 +1,81 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { TextField } from "@mui/material";
+
+type CustomerDetailData = {
+    id: number;
+    name: string;
+    kana: string;
+    birthday: Date;
+    email: string;
+    phone_no: string;
+    address: string;
+    post_no: string;
+    updated_by: string;
+  };
+
 
 function CustomerDetail() {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState<Boolean>(true);
-  const [data, setData] = useState([]);
-  const [id, setId] = useState<number>();
+  const [data, setData] = useState<any>({});
 
   useEffect(() => {
-    // idがqueryで利用可能になったら処理される
-    if (router.asPath !== router.route) {
-      setId(Number(router.query.id));
+    const fetchData = async () => {
+      try {
+        const apiUrl = `http://localhost/back/api/customers/${router.query.id}/`;
+        const csrftoken = Cookies.get("csrftoken") || "";
+        const credentials = "include";
+        const response = await fetch(apiUrl, {
+          method: "GET",
+          headers: {
+            "X-CSRFToken": csrftoken,
+          },
+          credentials: credentials,
+        });
+
+        if (response.ok) {
+          const responseData: CustomerDetailData = await response.json();
+          setData(responseData);
+          setLoggedIn(true);
+        } else if (response.status === 403) {
+          setLoggedIn(false);
+          router.push("/"); // ログインしていない場合にルートページにリダイレクト
+        } else {
+          alert("エラーが発生しました");
+        }
+      } catch (error) {
+        console.error("データの取得に失敗しました:", error);
+      }
+    };
+
+    if (router.isReady) {
+        fetchData();
     }
   }, [router]);
 
   useEffect(() => {
-    const apiUrl = `http://localhost/back/api/customers/${router.query.id}/`;
-    const csrftoken = Cookies.get("csrftoken") || "";
-    const credentials = "include";
-    fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "X-CSRFToken": csrftoken,
-      },
-      credentials: credentials,
-    })
-      .then((response) => {
-        if (response.ok) {
-          // ステータスコードが200の場合、JSONデータを取得
-          setLoggedIn(true);
-          return response.json();
-        } else if (response.status === 403) {
-          setLoggedIn(false); // ログインしていない状態をセット
-        } else {
-          alert("エラーが発生しました");
-        }
-      })
-      .then((data) => {
-        setData(data);
-      })
-      .catch((error) => {
-        console.error("データの取得に失敗しました:", error);
-      });
-  }, [router.query.id]);
-
-  useEffect(() => {
     if (!loggedIn) {
-      router.push("/"); // ログインしていない場合にルートページにリダイレクト
+      router.push("/");
     }
   }, [loggedIn]);
 
-  if (!data || !data.results) return null;
-  return <TextField>aaa</TextField>;
+  if (!data) return null;
+  
+  return (
+    <div className="customer-details">
+      <h1>お客様詳細</h1>
+      <div>{data.name}</div>
+      <div>{data.kana}</div>
+      <div>{data.birthday}</div>
+      <div>{data.email}</div>
+      <div>{data.phone_no}</div>
+      <div>{data.address}</div>
+      <div>{data.post_no}</div>
+        {/* 担当者 */}
+      <div>{data.updated_by}</div>
+    </div>
+  );
 }
 
 export default CustomerDetail;
