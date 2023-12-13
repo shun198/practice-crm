@@ -14,6 +14,7 @@ prepare:
 
 up:
 	docker-compose up -d
+	npm run dev $(FRONTEND_PATH)
 
 build:
 	docker-compose build
