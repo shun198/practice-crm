@@ -25,7 +25,7 @@ function LoginReactHookForm() {
   });
 
   const onSubmit = async (data: LoginDataType) => {
-    const apiUrl = "http://localhost/back/api/login/";
+    const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/login/`;
     const csrftoken = Cookies.get("csrftoken") || "";
     // ログイン情報をサーバーに送信
     const response = await fetch(apiUrl, {

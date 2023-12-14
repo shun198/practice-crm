@@ -28,7 +28,7 @@ function UserList() {
 
   const fetchData = async () => {
     try {
-      const apiUrl = "http://localhost/back/api/users/";
+      const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/users/`;
       const csrftoken = Cookies.get("csrftoken") || "";
       const credentials = "include";
 
