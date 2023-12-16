@@ -4,7 +4,7 @@ import router from "next/router";
 import { Button, TextField } from "@mui/material";
 import { ForgotPassword } from "../elements/ForgotPassword";
 
-function LoginReactHookForm() {
+function LoginForm() {
   type FormData = {
     email: string;
     password: string;
@@ -60,12 +60,12 @@ function LoginReactHookForm() {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col items-center"
       >
-        <div>
           <TextField
             className="w-[400px] my-[10px]"
             id="employee_number"
-            name="employee_number"
+            label="社員番号"
             placeholder="社員番号"
+            type="text"
             {...register("employee_number", {
               required: {
                 value: true,
@@ -73,19 +73,17 @@ function LoginReactHookForm() {
               },
               pattern: {
                 value: /^[0-9]{8}$/,
-                message: "8桁の数字のみ入力してください。",
+                message: "8桁の数字のみ入力してください",
               },
             })}
           />
           {errors.employee_number?.message && (
             <div className="text-red-500">{errors.employee_number.message}</div>
           )}
-        </div>
-        <div>
           <TextField
             className="w-[400px] my-[10px]"
             id="password"
-            name="password"
+            label="パスワード"
             placeholder="パスワード"
             type="password"
             {...register("password", {
@@ -102,7 +100,6 @@ function LoginReactHookForm() {
           {errors.password?.message && (
             <div className="text-red-500">{errors.password.message}</div>
           )}
-        </div>
         <Button
           type="submit"
           size="large"
@@ -118,4 +115,4 @@ function LoginReactHookForm() {
   );
 }
 
-export default LoginReactHookForm;
+export default LoginForm;

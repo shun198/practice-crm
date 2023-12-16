@@ -64,7 +64,7 @@ function CustomerDetail() {
     if (router.isReady) {
       fetchData();
     }
-  }, [router.isReady]);
+  }, [router]);
 
   useEffect(() => {
     if (!loggedIn) {
