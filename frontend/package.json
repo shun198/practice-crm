@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest --globals",
-    "format": "prettier --write '**/*.{ts,tsx,json}'"
+    "test": "jest",
+    "format": "prettier --write '**/*.{ts,tsx,json}'",
+    "jest-preview": "jest-preview"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -24,6 +25,11 @@
     "react-hook-form": "^7.48.2"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.23.3",
+    "@testing-library/dom": "^9.3.3",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
     "@types/jest": "^29.5.8",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -36,8 +42,7 @@
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
     "tailwindcss": "^3.3.5",
-    "typescript": "^5",
-    "vitest": "^0.34.6"
+    "typescript": "^5"
   },
   "volta": {
     "node": "20.10.0",
