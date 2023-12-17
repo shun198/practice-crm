@@ -29,6 +29,7 @@ toml = "^0.10.2"
 kombu = "^5.2.4"
 pycurl = "^7.45.2"
 requests = "^2.31.0"
+chardet = "^5.2.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.3"

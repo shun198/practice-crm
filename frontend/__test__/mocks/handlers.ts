@@ -1,3 +1,5 @@
-import { http } from 'msw'
+import { AuthInfoHandlers } from "./authInfo";
 
-export const handlers = []
+const handlers = [...AuthInfoHandlers];
+
+export default handlers;

@@ -8,6 +8,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import { BasicMenu } from "@/components/buttons/MenuButton";
 import { Button } from "@mui/material";
+import Pagination from "@mui/material/Pagination";
 
 type CustomerData = {
   id: number;
@@ -22,6 +23,7 @@ type CustomerArray = CustomerData[];
 function CustomerList() {
   const [data, setData] = useState<CustomerArray>([]);
   const [loggedIn, setLoggedIn] = useState<Boolean>(true); // ログイン状態を管理
+  const [page, setPage] = useState<Number>(1);
 
   const fetchData = async () => {
     try {
@@ -123,6 +125,14 @@ function CustomerList() {
             );
           })}
         </Table>
+      </div>
+      <div>
+        <Pagination
+          count={data.final} //総ページ数
+          color="primary" //ページネーションの色
+          onChange={(e, page) => setPage(page)} //変更されたときに走る関数。第2引数にページ番号が入る
+          page={data.current} //現在のページ番号
+        />
       </div>
     </div>
   );

@@ -26,7 +26,6 @@ from application.serializers.user import (
     UserSerializer,
     VerifyUserSerializer,
 )
-from application.utils.csv_wrapper import CSVResponseWrapper, CSVUserListData
 from application.utils.logs import LoggerName
 from project.settings.environment import django_settings
 
@@ -90,22 +89,6 @@ class UserViewSet(ModelViewSet):
             )
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @action(methods=["post"], detail=False)
-    def export(self, request):
-        """CSV形式でユーザー一覧をエクスポートするAPI
-
-        Args:
-            request : リクエスト
-
-        Returns:
-            CSVファイル
-        """
-        csvWrapper = CSVResponseWrapper("user_data.csv")
-        csv_data = CSVUserListData(self.queryset)
-        csvWrapper.write_response(csv_data)
-
-        return csvWrapper.response
 
     @action(methods=["post"], detail=False)
     def change_password(self, request):

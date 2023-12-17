@@ -1,17 +1,17 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import List from '@mui/material/List';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import SmartphoneIcon from '@mui/icons-material/Smartphone';
-import EmailIcon from '@mui/icons-material/Email';
-import CakeIcon from '@mui/icons-material/Cake';
-import PersonIcon from '@mui/icons-material/Person';
-import HomeIcon from '@mui/icons-material/Home';
-import BadgeIcon from '@mui/icons-material/Badge';
-import ListItem from '@mui/material/ListItem';
-import SignpostIcon from '@mui/icons-material/Signpost';
+import List from "@mui/material/List";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import SmartphoneIcon from "@mui/icons-material/Smartphone";
+import EmailIcon from "@mui/icons-material/Email";
+import CakeIcon from "@mui/icons-material/Cake";
+import PersonIcon from "@mui/icons-material/Person";
+import HomeIcon from "@mui/icons-material/Home";
+import BadgeIcon from "@mui/icons-material/Badge";
+import ListItem from "@mui/material/ListItem";
+import SignpostIcon from "@mui/icons-material/Signpost";
 
 type CustomerDetailData = {
   id: number;
@@ -77,46 +77,48 @@ function CustomerDetail() {
   return (
     <div className="customer-details">
       <h1 className="justify-center">お客様詳細</h1>
-      <List>        
+      <List>
         <ListItem disablePadding>
           <ListItemIcon>
-              <PersonIcon />
+            <PersonIcon />
           </ListItemIcon>
-          <ListItemText>{data.name}({data.kana})</ListItemText>
+          <ListItemText>
+            {data.name}({data.kana})
+          </ListItemText>
         </ListItem>
         <ListItem disablePadding>
           <ListItemIcon>
-              <CakeIcon />
+            <CakeIcon />
           </ListItemIcon>
           <ListItemText>{data.birthday}</ListItemText>
         </ListItem>
         <ListItem disablePadding>
           <ListItemIcon>
-              <EmailIcon />
+            <EmailIcon />
           </ListItemIcon>
           <ListItemText>{data.email}</ListItemText>
         </ListItem>
         <ListItem disablePadding>
           <ListItemIcon>
-              <SmartphoneIcon />
+            <SmartphoneIcon />
           </ListItemIcon>
           <ListItemText>{data.phone_no}</ListItemText>
         </ListItem>
         <ListItem disablePadding>
           <ListItemIcon>
-              <HomeIcon />
+            <HomeIcon />
           </ListItemIcon>
           <ListItemText>{data.address}</ListItemText>
         </ListItem>
         <ListItem disablePadding>
           <ListItemIcon>
-              <SignpostIcon />
+            <SignpostIcon />
           </ListItemIcon>
           <ListItemText>{data.post_no}</ListItemText>
         </ListItem>
         <ListItem disablePadding>
           <ListItemIcon>
-              <BadgeIcon />
+            <BadgeIcon />
           </ListItemIcon>
           <ListItemText>{data.updated_by}</ListItemText>
         </ListItem>

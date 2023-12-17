@@ -1,7 +1,7 @@
 from django.utils import timezone
 from rest_framework import serializers
 
-from application.models import Customer
+from application.models import Address, Customer
 
 
 class ListCustomerSerializer(serializers.ModelSerializer):
@@ -53,3 +53,50 @@ class DetailCustomerSerializer(serializers.ModelSerializer):
         rep["created_by"] = instance.created_by.username
         rep["updated_by"] = instance.updated_by.username
         return rep
+
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = [
+            "id",
+            "name",
+            "kana",
+            "email",
+            "phone_no",
+            "birthday",
+        ]
+        read_only_fields = ["id"]
+
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
+class CreateAndUpdateCustomerSerializer(serializers.Serializer):
+    customer = CustomerSerializer()
+    address = AddressSerializer()
+
+    def to_representation(self, instance: Customer):
+        try:
+            customer = CustomerSerializer(instance).data
+        except AttributeError:
+            customer = {}
+        try:
+            address = AddressSerializer(instance.address).data
+        except AttributeError:
+            address = {}
+        rep = {
+            "customer": customer,
+            "address": address,
+        }
+        return rep
+
+
+class ImportCsvSerializer(serializers.Serializer):
+    """CSVインポート用のシリアライザ"""
+
+    file = serializers.FileField()

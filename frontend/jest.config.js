@@ -8,19 +8,21 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const customJestConfig = {
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  setupFiles: ['./jest.polyfills.js'],
   moduleDirectories: ['node_modules', '<rootDir>/'],
   moduleNameMapper: {
     '^@/(.*)$': [
       '<rootDir>/components/$1',
       '<rootDir>/pages/$1',
       '<rootDir>/__test__/$1',
+      '<rootDir>/utils/$1',
     ],
   },
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
   testEnvironment: 'jest-environment-jsdom',
-  testTimeout: 20000,
 };
 
 module.exports = createJestConfig(customJestConfig);

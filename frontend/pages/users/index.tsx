@@ -74,6 +74,17 @@ function UserList() {
         <h1 className="flex flex-col items-center my-[10px] text-3xl text-gray-900">
           システムユーザ一覧
         </h1>
+        <div className="flex flex-col items-end my-[10px]">
+          <Button
+            type="submit"
+            size="medium"
+            variant="contained"
+            color="primary"
+            className="grid justify-items-end w-[200px] my-[20px]"
+          >
+            ユーザ招待
+          </Button>
+        </div>
         <Table>
           <TableHead>
             <TableRow>
