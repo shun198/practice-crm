@@ -16,6 +16,7 @@ class DjangoSettings(BaseSettings):
     TRUSTED_ORIGINS: str = "http://localhost http://localhost:9000"
     SLACK_ENDPOINT_URL: str = "http://test"
     BASE_URL: str = "http://localhost"
+    DJANGO_SETTINGS_MODULE: str = "project.settings.local"
 
 
 class AwsSettings(BaseSettings):
