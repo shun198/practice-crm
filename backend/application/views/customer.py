@@ -168,9 +168,7 @@ class CustomerViewSet(ModelViewSet):
                 }
                 address_serializer = AddressSerializer(data=address_data)
                 address_serializer.is_valid(raise_exception=True)
-                customer_serializer = CustomerSerializer(
-                    data=customer_data
-                )
+                customer_serializer = CustomerSerializer(data=customer_data)
                 customer_serializer.is_valid(raise_exception=True)
                 address = Address.objects.create(
                     **address_data,
@@ -195,7 +193,7 @@ class CustomerViewSet(ModelViewSet):
         Returns:
             CSVファイル
         """
-        queryset = CustomerFilter(queryset=self.get_queryset()).qs
+        queryset = self.filter_queryset(self.get_queryset())
         file = self._create_export_customer_csv(queryset)
         filename = (
             "お客様データ＿" + timezone.localdate().strftime("%Y-%m-%d") + ".csv"
@@ -240,10 +238,12 @@ class CustomerViewSet(ModelViewSet):
                     {
                         "氏名": customer.name,
                         "カナ氏名": customer.kana,
-                        "誕生日": timezone.localtime(customer.birthday).strftime("%Y/%m/%d"),
+                        "誕生日": customer.birthday,
                         "メールアドレス": customer.email,
                         "電話番号": customer.phone_no,
-                        "作成日": timezone.localdate(customer.created_at).strftime("%Y/%m/%d"),
+                        "作成日": timezone.localdate(
+                            customer.created_at
+                        ).strftime("%Y/%m/%d"),
                         "担当者": customer.updated_by.username,
                         "都道府県": customer.address.prefecture,
                         "市区町村": customer.address.municipalities,

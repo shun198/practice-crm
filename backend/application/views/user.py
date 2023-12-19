@@ -49,6 +49,8 @@ class UserViewSet(ModelViewSet):
                 return CheckTokenSerializer
             case "send_reset_password_email":
                 return SendResetPasswordEmailSerializer
+            case "toggle_user_active":
+                return None
             case _:
                 return UserSerializer
 
@@ -352,6 +354,28 @@ class UserViewSet(ModelViewSet):
 
         check = self._check_reset_password(serializer.data["token"]) != None
         return JsonResponse(data={"check": check})
+
+    @action(detail=True, methods=["post"])
+    def toggle_user_active(self, request, pk):
+        """ユーザを有効化/無効化するAPI
+        Args:
+            request : リクエスト
+            pk : ユーザID
+        Returns:
+            JsonResponse
+        """
+        user = self.get_object()
+        if request.user == user:
+            return JsonResponse(
+                data={"msg": "自身を無効化することはできません"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if user.is_active:
+            user.is_active = False
+        else:
+            user.is_active = True
+        user.save()
+        return JsonResponse(data={"is_active": user.is_active})
 
     def _check_invitation(self, token):
         """ユーザ招待用トークンを確認する
