@@ -1,6 +1,5 @@
 """DEV環境用の設定"""
 
-from application.injectors.s3 import DevS3Module, s3_injector
 from application.injectors.ses import DevSesModule, ses_injector
 from application.injectors.sns import DevSnsModule, sns_injector
 
@@ -28,5 +27,4 @@ AWS_STORAGE_BUCKET_NAME = aws_settings.AWS_STORAGE_BUCKET_NAME
 
 # DI設定
 sns_injector.binder.install(DevSnsModule())
-# s3_injector.binder.install(DevS3Module())
 ses_injector.binder.install(DevSesModule())
