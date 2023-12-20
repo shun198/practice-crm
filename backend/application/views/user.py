@@ -8,6 +8,7 @@ from django.db import DatabaseError, transaction
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.middleware.csrf import get_token
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -49,7 +50,7 @@ class UserViewSet(ModelViewSet):
                 return CheckTokenSerializer
             case "send_reset_password_email":
                 return SendResetPasswordEmailSerializer
-            case "toggle_user_active":
+            case "toggle_user_active" | "get_csrf_token":
                 return None
             case _:
                 return UserSerializer
@@ -70,6 +71,18 @@ class UserViewSet(ModelViewSet):
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+    @action(detail=False, methods=["get"])
+    def get_csrf_token(self, request):
+        """CSRF Tokenを発行する
+
+        Args:
+            request (HttpRequest): HttpRequestオブジェクト
+
+        Returns:
+            JsonResponse
+        """
+        return JsonResponse({"token": str(get_token(request))})
 
     def destroy(self, request, *args, **kwargs):
         """システムユーザを削除するAPI

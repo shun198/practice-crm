@@ -124,6 +124,12 @@ class Photo(models.Model):
         auto_now_add=True,
         db_comment="作成時間",
     )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        related_name="%(class)s_created_by",
+        db_comment="作成者ID",
+    )
 
     class Meta:
         db_table = "Photo"

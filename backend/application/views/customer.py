@@ -3,25 +3,28 @@ import tempfile
 from logging import getLogger
 
 import chardet
+
 from django.db import DatabaseError, transaction
 from django.http import FileResponse, JsonResponse
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from application.filters import CustomerFilter
-from application.models import Address, Customer
+from application.models import Address, Customer, Photo
 from application.serializers.customer import (
     AddressSerializer,
     CreateAndUpdateCustomerSerializer,
+    CustomerPhotoSerializer,
     CustomerSerializer,
     DetailCustomerSerializer,
     ImportCsvSerializer,
     ListCustomerSerializer,
+    CustomerPhotoSerializer,
 )
 from application.utils.logs import LoggerName
 
@@ -188,7 +191,8 @@ class CustomerViewSet(ModelViewSet):
     def csv_export(self, request):
         """お客様一覧のCSVをエクスポートする用のAPI
 
-        CSV形式でお客様一覧をエクスポートする
+        Args:
+            request : リクエスト
 
         Returns:
             CSVファイル
@@ -256,3 +260,24 @@ class CustomerViewSet(ModelViewSet):
         # ファイルの読み取り/書き込み位置をファイルの先頭に戻す
         file.seek(0)
         return file
+
+
+class CustomerPhotoViewSet(ModelViewSet):
+    queryset = Photo.objects.select_related("customer")
+    permission_classes = [IsAuthenticated]
+    serializer_class = CustomerPhotoSerializer
+
+    def create(self, request, *args, **kwargs):
+        photo_data = []
+        for photo in request.FILES.getlist("photo"):
+            serializer = self.get_serializer(data={"photo": photo})
+            serializer.is_valid(raise_exception=True)
+            photo_data.append(
+                Photo.objects.create(
+                    customer_id=kwargs["customer_pk"],
+                    photo=photo,
+                    created_by=request.user,
+                )
+            )
+        response = self.serializer_class(photo_data, many=True).data
+        return Response(response, status=status.HTTP_201_CREATED)

@@ -1,7 +1,7 @@
 from django.utils import timezone
 from rest_framework import serializers
 
-from application.models import Address, Customer
+from application.models import Address, Customer, Photo
 
 
 class ListCustomerSerializer(serializers.ModelSerializer):
@@ -100,3 +100,17 @@ class ImportCsvSerializer(serializers.Serializer):
     """CSVインポート用のシリアライザ"""
 
     file = serializers.FileField()
+
+
+class CustomerPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        fields = ["id", "photo", "created_at", "created_by"]
+        read_only_fields = ["id", "created_at", "created_by"]
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep["photo"] = instance.photo.name.split("/")[-1]
+        rep["created_by"] = instance.created_by.username
+        return rep
+

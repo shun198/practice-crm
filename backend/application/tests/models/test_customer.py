@@ -5,7 +5,10 @@ from django.core.exceptions import ValidationError
 from django.db.utils import DataError, IntegrityError
 
 from application.models import Address, Customer
-from application.tests.factories.customer import AddressFactory, CustomerFactory
+from application.tests.factories.customer import (
+    AddressFactory,
+    CustomerFactory,
+)
 
 
 def get_customer(id):
