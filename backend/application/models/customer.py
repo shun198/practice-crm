@@ -4,6 +4,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 from application.models.user import User
+from application.utils.storages import CustomStorage
 
 
 class Customer(models.Model):
@@ -99,3 +100,30 @@ class Address(models.Model):
 
     class Meta:
         db_table = "Address"
+
+
+class Photo(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        db_comment="ID",
+    )
+    customer = models.ForeignKey(
+        "Customer",
+        on_delete=models.CASCADE,
+        related_name="customer_photo",
+        db_comment="お客様ID",
+    )
+    photo = models.FileField(
+        upload_to="customer_photo",
+        storage=CustomStorage(),
+        db_comment="お客様の画像データ",
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        db_comment="作成時間",
+    )
+
+    class Meta:
+        db_table = "Photo"
