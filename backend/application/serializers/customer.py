@@ -105,7 +105,7 @@ class ImportCsvSerializer(serializers.Serializer):
 
 class CustomerPhotoSerializer(serializers.ModelSerializer):
     photo = CustomFileField()
-    
+
     class Meta:
         model = Photo
         fields = ["id", "photo", "created_at", "created_by"]
@@ -116,4 +116,3 @@ class CustomerPhotoSerializer(serializers.ModelSerializer):
         rep["photo"] = instance.photo.name.split("/")[-1]
         rep["created_by"] = instance.created_by.username
         return rep
-

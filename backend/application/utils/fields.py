@@ -1,7 +1,6 @@
 from django.utils.translation import gettext_lazy as _
-from rest_framework.fields import (
-    FileField,
-)
+from rest_framework.fields import FileField
+
 from project.settings.base import MAX_FILE_SIZE_LIMIT
 
 

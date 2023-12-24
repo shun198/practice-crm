@@ -6,9 +6,9 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.hashers import make_password
 from django.db import DatabaseError, transaction
 from django.http import HttpResponse, JsonResponse
+from django.middleware.csrf import get_token
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from django.middleware.csrf import get_token
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -50,7 +50,7 @@ class UserViewSet(ModelViewSet):
                 return CheckTokenSerializer
             case "send_reset_password_email":
                 return SendResetPasswordEmailSerializer
-            case "toggle_user_active" | "get_csrf_token":
+            case "toggle_user_active" | "get_csrf_token" | "user_info":
                 return None
             case _:
                 return UserSerializer
@@ -66,7 +66,11 @@ class UserViewSet(ModelViewSet):
             "invite_user",
         }:
             permission_classes = [IsManagementUser]
-        elif self.action in {"reset_password", "send_reset_password_email"}:
+        elif self.action in {
+            "reset_password",
+            "send_reset_password_email",
+            "user_info",
+        }:
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
@@ -155,6 +159,8 @@ class UserViewSet(ModelViewSet):
                     ],
                     password=make_password(get_random_string(16)),
                     email=serializer.validated_data["email"],
+                    created_by=request.user,
+                    updated_by=request.user,
                 )
                 token = secrets.token_urlsafe(64)
                 expiry = timezone.now() + timedelta(days=1)
@@ -390,6 +396,25 @@ class UserViewSet(ModelViewSet):
         user.save()
         return JsonResponse(data={"is_active": user.is_active})
 
+    @action(detail=False, methods=["get"])
+    def user_info(self, request):
+        """ユーザの情報を取得するAPI
+
+        Args:
+            request : リクエスト
+
+        Returns:
+            JsonResponse
+        """
+        data = {"name": None, "role": None}
+        if request.user.is_authenticated:
+            # パスワードが社員番号の場合is_initial_passwordはtrue
+            data = {
+                "name": request.user.username,
+                "role": User.Role(request.user.role).label,
+            }
+        return JsonResponse(data=data)
+
     def _check_invitation(self, token):
         """ユーザ招待用トークンを確認する
 
@@ -403,7 +428,10 @@ class UserViewSet(ModelViewSet):
             ]
         """
         try:
-            invitation = UserInvitation.objects.get(token=token)
+            invitation = UserInvitation.objects.select_related("user").get(
+                token=token,
+                is_used=False,
+            )
         except:
             return None
 
@@ -424,7 +452,12 @@ class UserViewSet(ModelViewSet):
             ]
         """
         try:
-            reset_password = UserResetPassword.objects.get(token=token)
+            reset_password = UserResetPassword.objects.select_related(
+                "user"
+            ).get(
+                token=token,
+                is_used=False,
+            )
         except:
             return None
 

@@ -3,6 +3,16 @@ import tempfile
 from logging import getLogger
 
 import chardet
+from django.db import DatabaseError, transaction
+from django.http import FileResponse, JsonResponse
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+
 from application.filters import CustomerFilter
 from application.models import Address, Customer, Photo
 from application.serializers.customer import (
@@ -15,15 +25,6 @@ from application.serializers.customer import (
     ListCustomerSerializer,
 )
 from application.utils.logs import LoggerName
-from django.db import DatabaseError, transaction
-from django.http import FileResponse, JsonResponse
-from django.utils import timezone
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 
 
 class CustomerViewSet(ModelViewSet):
@@ -282,4 +283,3 @@ class CustomerPhotoViewSet(ModelViewSet):
     def perform_destroy(self, instance):
         instance.photo.delete(save=False)
         instance.delete()
-
