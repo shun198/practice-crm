@@ -14,13 +14,6 @@
         }
     },
     {
-        "model": "auth.Group",
-        "pk": 3,
-        "fields": {
-            "name": "アルバイト"
-        }
-    },
-    {
         "model": "application.User",
         "pk": 1,
         "fields": {
@@ -59,23 +52,6 @@
         "pk": 3,
         "fields": {
             "employee_number": "00000003",
-            "username": "アルバイトユーザ01",
-            "password": "pbkdf2_sha256$390000$KF4YHJxvWjSODaXdxLBg6S$U5XDh8mR77kMMUtlRcBZS/bkaxdpjNR/P4zyy25g3/I=",
-            "email": "test03@example.com",
-            "role": 2,
-            "is_superuser": 0,
-            "is_verified": true,
-            "created_at": "2022-07-28T00:31:09.732Z",
-            "updated_at": "2022-07-28T00:31:09.732Z",
-            "created_by": 1,
-            "updated_by": 1
-        }
-    },
-    {
-        "model": "application.User",
-        "pk": 4,
-        "fields": {
-            "employee_number": "00000004",
             "username": "スーパーユーザ01",
             "password": "pbkdf2_sha256$390000$KF4YHJxvWjSODaXdxLBg6S$U5XDh8mR77kMMUtlRcBZS/bkaxdpjNR/P4zyy25g3/I=",
             "email": "test04@example.com",
@@ -84,8 +60,8 @@
             "is_verified": true,
             "created_at": "2022-07-28T00:31:09.732Z",
             "updated_at": "2022-07-28T00:31:09.732Z",
-            "created_by": 4,
-            "updated_by": 4
+            "created_by": 1,
+            "updated_by": 1
         }
     },
     {

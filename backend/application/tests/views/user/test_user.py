@@ -49,18 +49,6 @@ def test_general_user_can_list_users(
 
 
 @pytest.mark.django_db
-def test_sales_user_can_list_users(
-    client, part_time_user, password, get_user_url
-):
-    """アルバイトユーザでユーザの一覧を表示できるテスト"""
-    client.login(
-        employee_number=part_time_user.employee_number, password=password
-    )
-    response = client.get(get_user_url, format="json")
-    assert response.status_code == status.HTTP_200_OK
-
-
-@pytest.mark.django_db
 def test_user_cannot_list_users_without_login(client, get_user_url):
     """ログインなしでユーザの一覧を表示できないテスト"""
     response = client.get(get_user_url, format="json")
@@ -92,19 +80,6 @@ def test_general_user_can_list_user_details(client, general_user, password):
 
 
 @pytest.mark.django_db
-def test_part_time_user_can_list_user_details(
-    client, part_time_user, password
-):
-    """アルバイトユーザでユーザの詳細を表示できるテスト"""
-    user = UserFactory()
-    client.login(
-        employee_number=part_time_user.employee_number, password=password
-    )
-    response = client.get(get_user_details_url(user.id), format="json")
-    assert response.status_code == status.HTTP_200_OK
-
-
-@pytest.mark.django_db
 def test_management_user_can_create_user(
     client, management_user, password, get_user_url, user_data
 ):
@@ -123,18 +98,6 @@ def test_general_user_cannot_create_user(
     """一般ユーザでユーザを作成できないテスト"""
     client.login(
         employee_number=general_user.employee_number, password=password
-    )
-    response = client.post(get_user_url, user_data, format="json")
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-@pytest.mark.django_db
-def test_general_user_cannot_create_user(
-    client, part_time_user, password, get_user_url, user_data
-):
-    """アルバイトユーザでユーザを作成できないテスト"""
-    client.login(
-        employee_number=part_time_user.employee_number, password=password
     )
     response = client.post(get_user_url, user_data, format="json")
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -163,21 +126,6 @@ def test_general_user_cannot_update_user(
     user = UserFactory()
     client.login(
         employee_number=general_user.employee_number, password=password
-    )
-    response = client.put(
-        get_user_details_url(user.id), user_data, format="json"
-    )
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-@pytest.mark.django_db
-def test_general_user_cannot_update_user(
-    client, part_time_user, password, user_data
-):
-    """アルバイトユーザでユーザを更新できないテスト"""
-    user = UserFactory()
-    client.login(
-        employee_number=part_time_user.employee_number, password=password
     )
     response = client.put(
         get_user_details_url(user.id), user_data, format="json"
@@ -216,21 +164,6 @@ def test_general_user_cannot_partial_update_user(
 
 
 @pytest.mark.django_db
-def test_general_user_cannot_partial_update_user(
-    client, part_time_user, password, user_data
-):
-    """アルバイトユーザでユーザを一部更新できないテスト"""
-    user = UserFactory()
-    client.login(
-        employee_number=part_time_user.employee_number, password=password
-    )
-    response = client.patch(
-        get_user_details_url(user.id), user_data, format="json"
-    )
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-@pytest.mark.django_db
 def test_management_user_can_delete_user(
     client, management_user, password, user_data
 ):
@@ -253,21 +186,6 @@ def test_general_user_cannot_delete_user(
     user = UserFactory()
     client.login(
         employee_number=general_user.employee_number, password=password
-    )
-    response = client.delete(
-        get_user_details_url(user.id), user_data, format="json"
-    )
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-@pytest.mark.django_db
-def test_general_user_cannot_delete_user(
-    client, part_time_user, password, user_data
-):
-    """アルバイトユーザでユーザを削除できないテスト"""
-    user = UserFactory()
-    client.login(
-        employee_number=part_time_user.employee_number, password=password
     )
     response = client.delete(
         get_user_details_url(user.id), user_data, format="json"

@@ -119,11 +119,3 @@ def test_role_can_be_general():
     role = User.Role.GENERAL
     user = UserFactory(role=role)
     assert get_user(user.id).role == role
-
-
-@pytest.mark.django_db
-def test_role_can_be_part_time():
-    """アルバイトのロール"""
-    role = User.Role.PART_TIME
-    user = UserFactory(role=role)
-    assert get_user(user.id).role == role

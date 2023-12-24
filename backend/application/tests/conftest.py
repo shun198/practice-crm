@@ -34,13 +34,5 @@ def general_user(password):
 
 
 @pytest.fixture
-def part_time_user(password):
-    return UserFactory(
-        password=password,
-        role=User.Role.PART_TIME,
-    )
-
-
-@pytest.fixture
 def password():
     return "test"

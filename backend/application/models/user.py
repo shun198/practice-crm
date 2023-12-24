@@ -17,12 +17,10 @@ class User(AbstractUser):
         Args:
             MANAGEMENT(0): 管理者
             GENERAL(1):    一般
-            PART_TIME(2):  アルバイト
         """
 
         MANAGEMENT = 0, "管理者"
         GENERAL = 1, "一般"
-        PART_TIME = 2, "アルバイト"
 
     # 不要なフィールドはNoneにすることができる
     first_name = None
@@ -54,7 +52,7 @@ class User(AbstractUser):
     )
     role = models.PositiveIntegerField(
         choices=Role.choices,
-        default=Role.PART_TIME,
+        default=Role.MANAGEMENT,
         db_comment="システムユーザのロール",
     )
     created_at = models.DateTimeField(

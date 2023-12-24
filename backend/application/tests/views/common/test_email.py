@@ -50,21 +50,3 @@ def test_general_user_cannot_send_invite_user_email(
         send_invite_user_mail_url, email_data, format="json"
     )
     assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-@pytest.mark.django_db()
-def test_part_time_user_cannot_send_invite_user_email(
-    client,
-    part_time_user,
-    password,
-    send_invite_user_mail_url,
-    email_data,
-):
-    """アルバイトユーザで招待メールを送信できないことをテスト"""
-    client.login(
-        employee_number=part_time_user.employee_number, password=password
-    )
-    response = client.post(
-        send_invite_user_mail_url, email_data, format="json"
-    )
-    assert response.status_code == status.HTTP_403_FORBIDDEN

@@ -110,7 +110,7 @@ def test_send_reset_password_mail_user_is_not_verified(
 @pytest.fixture
 def get_reset_password_url():
     """パスワード再設定用のurl"""
-    return "/api/users/reset_password/"
+    return "/api/users/reset_password"
 
 
 @pytest.mark.django_db

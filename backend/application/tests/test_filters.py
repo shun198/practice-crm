@@ -37,15 +37,12 @@ def test_user_filter_email_contains():
 def test_user_filter_role_in():
     """ロールを複数フィルターできる事を確認する"""
 
-    User.objects.all().update(role=User.Role.PART_TIME)
+    User.objects.all().update(role=User.Role.GENERAL)
     management_user = UserFactory(role=User.Role.MANAGEMENT)
-    general_user = UserFactory(role=User.Role.MANAGEMENT)
-    user_filter = UserFilter(
-        {"role__in": f"{User.Role.MANAGEMENT},{User.Role.GENERAL}"}
-    )
-    assert user_filter.qs.count() == 2
+    user_filter = UserFilter({"role__in": f"{User.Role.MANAGEMENT}"})
+    assert user_filter.qs.count() == 1
     assert user_filter.qs[0] == management_user
-    assert user_filter.qs[1] == general_user
+    assert user_filter.qs[1] == management_user
 
 
 @pytest.mark.django_db

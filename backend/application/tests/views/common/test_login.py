@@ -45,23 +45,6 @@ def test_general_user_can_login(client, general_user, password, get_login_url):
 
 
 @pytest.mark.django_db
-def test_part_time_user_can_login(
-    client, part_time_user, password, get_login_url
-):
-    """アルバイトユーザで正常にログインできることをテスト"""
-    response = client.post(
-        get_login_url,
-        {
-            "employee_number": part_time_user.employee_number,
-            "password": password,
-        },
-        format="json",
-    )
-    assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"role": "PART_TIME"}
-
-
-@pytest.mark.django_db
 def test_user_cannot_login_with_incorrect_password(
     client, management_user, get_login_url
 ):

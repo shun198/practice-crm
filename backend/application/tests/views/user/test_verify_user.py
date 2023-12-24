@@ -81,38 +81,6 @@ def test_verify_user_general(
 
 
 @pytest.mark.django_db
-def test_verify_user_part_time(
-    client,
-    part_time_user,
-    password,
-    get_verify_user_url,
-):
-    """アルバイトユーザがシステムユーザを作成(認証)できることを確認"""
-    client.login(
-        employee_number=part_time_user.employee_number,
-        password=password,
-    )
-    user = UserFactory(is_verified=False)
-    invitation = UserInvitationFactory(
-        user=user,
-    )
-    post_invite_user_data = {
-        "token": invitation.token,
-        "new_password": "Test@123",
-        "confirm_password": "Test@123",
-    }
-    response = client.post(
-        get_verify_user_url,
-        post_invite_user_data,
-        format="json",
-    )
-    assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"msg": "新規ユーザの認証に成功しました"}
-    assert User.objects.get(id=user.id).is_verified
-    assert UserInvitation.objects.get(id=invitation.id).is_used
-
-
-@pytest.mark.django_db
 def test_cannot_verify_user_without_token(
     client,
     management_user,
