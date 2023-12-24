@@ -1,0 +1,441 @@
+# https://swagger.io/specification/
+# openapiのversion
+openapi: 3.1.0
+# APIに関するメタデータ
+info:
+  title: project
+  description: |-
+    # プロジェクトの詳細
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/
+
+# basic認証とcookie認証の設定
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:         # arbitrary name for the security scheme; will be used in the "security" key later
+      type: apiKey
+      in: cookie
+      name: JSESSIONID  # cookie name
+
+security:
+  - basicAuth: [] 
+  - cookieAuth: []
+
+tags:
+  - name: health
+    description: ヘルスチェックAPI
+    externalDocs:
+      description: ヘルスチェックについて
+      url: https://qiita.com/shun198/items/be6be8453723d0887ba4
+  - name: login
+    description: ログインAPI
+    externalDocs:
+      description: ログインについて
+      url: https://qiita.com/shun198/items/067e122bb291fed2c839
+  - name: logout
+    description: ログアウトAPI
+    externalDocs:
+      description: ログアウトについて
+      url: https://qiita.com/shun198/items/067e122bb291fed2c839
+  - name: users
+    description: システムユーザ関連のAPI
+  - name: product
+    description: 商品関連のAPI
+
+paths:
+  /api/health:
+    get:
+      tags:
+        - health
+      summary: ヘルスチェックAPI
+      description: APIサーバー単独でのヘルスチェック
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: ステータス
+                    example: pass
+  /api/login/:
+    post:
+      tags:
+        - login
+      summary: ログインAPI
+      description: アプリケーションにログインする
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000001"
+                password:
+                  type: string
+                  description: パスワード
+                  example: "test"
+              required:
+                - "employee_number"
+                - "password"
+      responses:
+        "200":
+          description: ログインに成功
+          headers: 
+            Set-Cookie:
+              schema: 
+                type: string
+                example: JSESSIONID=abcde12345; Path=/; HttpOnly
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                role: "MANAGEMENT"
+        "400":
+          description: ログインに失敗
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                msg: "社員番号またはパスワードが間違っています"
+
+  /api/logout:
+    post:
+      tags:
+        - logout
+      summary: ログアウトAPI
+      description: アプリケーションにログアウトする
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000001"
+                password:
+                  type: string
+                  description: パスワード
+                  example: "test"
+              required:
+                - "employee_number"
+                - "password"
+      responses:
+        "200":
+          description: ログアウトに成功
+          content:
+            application/json:
+              schema:
+                type: object
+          
+  /api/users:
+    get:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: システムユーザを一覧表示する
+      security:
+        - basicAuth: [] 
+        - cookieAuth: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              properties:
+                id:
+                  type: string
+                  description: UUID
+                employee_number:
+                  type: string
+                  description: 社員番号
+                username:
+                  type: string
+                  description: ユーザ名
+                email:
+                  type: string
+                  description: メールアドレス
+                role:
+                  type: int
+                  description: ロール
+              examples:
+                user_example:
+                  value:
+                    - id: "00000000-0000-0000-0000-000000000001"
+                      employee_number: "00000001"
+                      username: "test01"
+                      email: "test01@example.com"
+                      role: 0
+                    - id: "00000000-0000-0000-0000-000000000002"
+                      employee_number: "00000002"
+                      username: "test02"
+                      email: "test02@example.com"
+                      role: 1
+                    - id: "00000000-0000-0000-0000-000000000003"
+                      employee_number: "00000003"
+                      username: "test03"
+                      email: "test03@example.com"
+                      role: 2
+                    - id: "00000000-0000-0000-0000-000000000004"
+                      employee_number: "00000004"
+                      username: "test04"
+                      email: "test04@example.com"
+                      role: 0
+    post:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: システムユーザを登録する
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000005"
+                username:
+                  type: string
+                  description: ユーザ名
+                  example: "test05"
+                email:
+                  type: string
+                  description: メールアドレス
+                  example: "test05@example.com"
+                role:
+                  type: int
+                  description: ユーザ名
+                  example: 0
+              required:
+                - "employee_number"
+                - "username"
+                - "email"
+                - "role"
+      responses:
+        '201':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: "Random UUID"
+                employee_number: "00000005"
+                username: "test05"
+                email: "test05@example.com"
+                role: 0
+
+  /api/users/{id}:
+    get:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: 該当するUUIDのシステムユーザを取得する
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: "00000000-0000-0000-0000-000000000001"
+                employee_number: "00000001"
+                username: "test01"
+                email: "test01@example.com"
+                role: 0
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 取得したいシステムユーザのUUID
+          schema:
+            type: string
+          example: "00000000-0000-0000-0000-000000000001"
+
+    put:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: 該当するUUIDのシステムユーザを更新する
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000005"
+                username:
+                  type: string
+                  description: ユーザ名
+                  example: "test05"
+                email:
+                  type: string
+                  description: メールアドレス
+                  example: "test05@example.com"
+                role:
+                  type: int
+                  description: ユーザ名
+                  example: 0
+              required:
+                - "employee_number"
+                - "username"
+                - "email"
+                - "role"
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: "00000000-0000-0000-0000-000000000004"
+                employee_number: "00000004"
+                username: "test04"
+                email: "test04@example.com"
+                role: 0
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 更新したいシステムユーザのUUID
+          schema:
+            type: string
+          example: "00000000-0000-0000-0000-000000000004"
+
+    patch:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: 該当するUUIDのシステムユーザを一部更新する
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                employee_number:
+                  type: string
+                  description: 社員番号
+                  example: "00000005"
+                username:
+                  type: string
+                  description: ユーザ名
+                  example: "test05"
+                email:
+                  type: string
+                  description: メールアドレス
+                  example: "test05@example.com"
+                role:
+                  type: int
+                  description: ユーザ名
+                  example: 0
+              required:
+                - "employee_number"
+                - "password"
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: "00000000-0000-0000-0000-000000000004"
+                employee_number: "00000004"
+                username: "test04"
+                email: "test04@example.com"
+                role: 0
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 一部更新したいシステムユーザのUUID
+          schema:
+            type: string
+          example: "00000000-0000-0000-0000-000000000004"
+
+    delete:
+      tags:
+        - users
+      summary: システムユーザのAPI
+      description: 該当するUUIDのシステムユーザを削除する
+      responses:
+        '204':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 削除したいシステムユーザのUUID
+          schema:
+            type: string
+          example: "00000000-0000-0000-0000-000000000004"
+
+  /api/product:
+    get:
+      tags:
+        - product
+      summary: 商品のAPI
+      description: 商品を一覧表示する
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+              properties:
+                id:
+                  type: string
+                  description: UUID
+                name:
+                  type: string
+                  description: 商品名
+                details:
+                  type: string
+                  description: 商品の詳細
+                price:
+                  type: int
+                  description: 商品の金額
+                created_at:
+                  type: datetime
+                  description: 作成日
+                updated_at:
+                  type: datetime
+                  description: 更新日
+              examples:
+                product_example:
+                  value:
+                    - id: "00000000-0000-0000-0000-000000000001"
+                      name: "枕"
+                      details: "快眠できる"
+                      price: 10000
+                      created_at: "2022-07-28T00:31:09.732Z"
+                      updated_at: "2022-07-28T00:31:09.732Z"
