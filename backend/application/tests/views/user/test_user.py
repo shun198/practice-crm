@@ -1,7 +1,8 @@
 import pytest
+from rest_framework import status
+
 from application.models.user import User
 from application.tests.factories.user import UserFactory
-from rest_framework import status
 
 
 @pytest.fixture

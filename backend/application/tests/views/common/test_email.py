@@ -1,7 +1,8 @@
 import pytest
-from application.tests.common_method import mail_confirm
 from django.core import mail
 from rest_framework import status
+
+from application.tests.common_method import mail_confirm
 
 
 @pytest.fixture
