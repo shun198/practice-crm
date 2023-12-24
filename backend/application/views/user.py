@@ -57,7 +57,6 @@ class UserViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action in {
-            "list",
             "create",
             "update",
             "destroy",

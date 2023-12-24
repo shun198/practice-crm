@@ -64,7 +64,7 @@ def test_sales_user_can_list_users(
 def test_user_cannot_list_users_without_login(client, get_user_url):
     """ログインなしでユーザの一覧を表示できないテスト"""
     response = client.get(get_user_url, format="json")
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 @pytest.mark.django_db

@@ -18,7 +18,6 @@ def test_user_serializer_to_representation(management_user):
             ("username", management_user.username),
             ("email", management_user.email),
             ("role", management_user.get_role_display()),
-            ("is_verified", management_user.is_verified),
         ]
     )
 

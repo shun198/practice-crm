@@ -10,15 +10,20 @@ info:
 servers:
   - url: http://localhost:8000/
 
-# basic認証の設定
+# basic認証とcookie認証の設定
 components:
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
+    cookieAuth:         # arbitrary name for the security scheme; will be used in the "security" key later
+      type: apiKey
+      in: cookie
+      name: JSESSIONID  # cookie name
 
 security:
   - basicAuth: [] 
+  - cookieAuth: []
 
 tags:
   - name: health
@@ -86,6 +91,11 @@ paths:
       responses:
         "200":
           description: ログインに成功
+          headers: 
+            Set-Cookie:
+              schema: 
+                type: string
+                example: JSESSIONID=abcde12345; Path=/; HttpOnly
           content:
             application/json:
               schema:
@@ -138,6 +148,9 @@ paths:
         - users
       summary: システムユーザのAPI
       description: システムユーザを一覧表示する
+      security:
+        - basicAuth: [] 
+        - cookieAuth: []
       responses:
         '200':
           description: 成功
