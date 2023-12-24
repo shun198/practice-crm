@@ -1,5 +1,5 @@
 # https://swagger.io/specification/
-openapi: 3.0.0
+openapi: 3.0.3
 # APIに関するメタデータ
 info:
   title: project
