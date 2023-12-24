@@ -1,5 +1,26 @@
 [
     {
+        "model": "auth.Group",
+        "pk": 1,
+        "fields": {
+            "name": "管理者"
+        }
+    },
+    {
+        "model": "auth.Group",
+        "pk": 2,
+        "fields": {
+            "name": "一般"
+        }
+    },
+    {
+        "model": "auth.Group",
+        "pk": 3,
+        "fields": {
+            "name": "アルバイト"
+        }
+    },
+    {
         "model": "application.User",
         "pk": 1,
         "fields": {
