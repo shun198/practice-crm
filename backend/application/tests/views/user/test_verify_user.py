@@ -1,19 +1,18 @@
 from datetime import timedelta
 
 import pytest
-from django.utils import timezone
-from freezegun import freeze_time
-from rest_framework import status
-
 from application.models import User, UserInvitation
 from application.tests.factories.user import UserFactory
 from application.tests.factories.user_invitation import UserInvitationFactory
+from django.utils import timezone
+from freezegun import freeze_time
+from rest_framework import status
 
 
 @pytest.fixture
 def get_verify_user_url():
     """社員登録用のurl"""
-    return "/api/users/verify_user/"
+    return "/api/users/verify_user"
 
 
 @pytest.mark.django_db

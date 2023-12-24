@@ -4,12 +4,12 @@ from rest_framework import status
 
 @pytest.fixture
 def get_login_url():
-    return "/api/login/"
+    return "/api/login"
 
 
 @pytest.fixture
 def get_logout_url():
-    return "/api/logout/"
+    return "/api/logout"
 
 
 @pytest.mark.django_db

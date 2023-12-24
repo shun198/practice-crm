@@ -1,16 +1,15 @@
 import pytest
+from application.models import User, UserInvitation
+from application.tests.common_method import mail_confirm
 from django.core import mail
 from django.db import DatabaseError
 from rest_framework import status
-
-from application.models import User, UserInvitation
-from application.tests.common_method import mail_confirm
 
 
 @pytest.fixture
 def get_invite_user_url():
     """社員招待用のurl"""
-    return "/api/users/invite_user/"
+    return "/api/users/invite_user"
 
 
 @pytest.fixture

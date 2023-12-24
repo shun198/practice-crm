@@ -47,7 +47,7 @@ tags:
     description: 商品関連のAPI
 
 paths:
-  /api/health/:
+  /api/health:
     get:
       tags:
         - health
@@ -111,7 +111,7 @@ paths:
               example:
                 msg: "社員番号またはパスワードが間違っています"
 
-  /api/logout/:
+  /api/logout:
     post:
       tags:
         - logout
@@ -142,7 +142,7 @@ paths:
               schema:
                 type: object
           
-  /api/users/:
+  /api/users:
     get:
       tags:
         - users
@@ -243,7 +243,7 @@ paths:
                 email: "test05@example.com"
                 role: 0
 
-  /api/users/{id}/:
+  /api/users/{id}:
     get:
       tags:
         - users
@@ -398,7 +398,7 @@ paths:
             type: string
           example: "00000000-0000-0000-0000-000000000004"
 
-  /api/product/:
+  /api/product:
     get:
       tags:
         - product

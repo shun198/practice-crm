@@ -1,14 +1,13 @@
-from django.urls import include, path
-from rest_framework_nested import routers
-
 from application.views.customer import CustomerPhotoViewSet, CustomerViewSet
 from application.views.health_check import health_check
 from application.views.login import LoginViewSet
 from application.views.product import ProductViewSet
 from application.views.sms import SmsViewSet
 from application.views.user import UserViewSet
+from django.urls import include, path
+from rest_framework_nested import routers
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"", LoginViewSet, basename="login")
 router.register(r"users", UserViewSet, basename="user")
 router.register(r"customers", CustomerViewSet, basename="customer")

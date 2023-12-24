@@ -1,17 +1,16 @@
 import pytest
-from rest_framework import status
-
 from application.models.user import User
 from application.tests.factories.user import UserFactory
+from rest_framework import status
 
 
 @pytest.fixture
 def get_user_url():
-    return "/api/users/"
+    return "/api/users"
 
 
 def get_user_details_url(id):
-    return f"/api/users/{id}/"
+    return f"/api/users/{id}"
 
 
 @pytest.fixture
