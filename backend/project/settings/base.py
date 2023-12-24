@@ -40,7 +40,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": "application.utils.pagination.CustomPageNumberPagination",
-    "PAGE_SIZE": 5,
+    "PAGE_SIZE": 10,
 }
 
 
@@ -152,6 +152,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_URL = "/upload/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "upload")
+
+MAX_FILE_SIZE_LIMIT = 5000000
 
 # 自身以外のオリジンのHTTPリクエスト内にクッキーを含めることを許可する
 CORS_ALLOW_CREDENTIALS = True

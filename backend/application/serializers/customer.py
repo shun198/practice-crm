@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from application.models import Address, Customer, Photo
+from application.utils.fields import CustomFileField
 
 
 class ListCustomerSerializer(serializers.ModelSerializer):
@@ -103,6 +104,8 @@ class ImportCsvSerializer(serializers.Serializer):
 
 
 class CustomerPhotoSerializer(serializers.ModelSerializer):
+    photo = CustomFileField()
+    
     class Meta:
         model = Photo
         fields = ["id", "photo", "created_at", "created_by"]

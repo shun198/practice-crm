@@ -1,10 +1,9 @@
 import uuid
 
-from django.core.validators import RegexValidator
-from django.db import models
-
 from application.models.user import User
 from application.utils.storages import CustomStorage
+from django.core.validators import RegexValidator
+from django.db import models
 
 
 class Customer(models.Model):
@@ -130,6 +129,13 @@ class Photo(models.Model):
         related_name="%(class)s_created_by",
         db_comment="作成者ID",
     )
+
+    def save(self, *args, **kwargs):
+        if self._state.adding and self.pk:
+            self.photo.name = "{}/{}".format(
+                self.pk, self.photo.name
+            )
+        super().save(*args, **kwargs)
 
     class Meta:
         db_table = "Photo"

@@ -281,3 +281,7 @@ class CustomerPhotoViewSet(ModelViewSet):
             )
         response = self.serializer_class(photo_data, many=True).data
         return Response(response, status=status.HTTP_201_CREATED)
+
+    def perform_destroy(self, instance):
+        instance.photo.delete(save=False)
+        instance.delete()
