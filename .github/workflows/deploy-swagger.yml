@@ -6,7 +6,7 @@ on:
       - develop
       - main
 jobs:
-  deploy-to-github-pages:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Chekcout code
