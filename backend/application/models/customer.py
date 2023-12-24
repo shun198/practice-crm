@@ -133,7 +133,7 @@ class Photo(models.Model):
 
     def save(self, *args, **kwargs):
         if self._state.adding and self.pk:
-            self.photo.name = "{}/{}".format(self.pk, self.photo.name)
+            self.photo.name = "{}/{}".format(self.customer.id, self.photo.name)
         super().save(*args, **kwargs)
 
     class Meta:
