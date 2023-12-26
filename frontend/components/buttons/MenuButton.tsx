@@ -24,7 +24,7 @@ export const BasicMenu = () => {
   };
 
   const onSubmitLogout = async () => {
-    const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/logout/`;
+    const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/logout`;
     const csrftoken = Cookies.get("csrftoken") || "";
     // ログイン情報をサーバーに送信
     const response = await fetch(apiUrl, {

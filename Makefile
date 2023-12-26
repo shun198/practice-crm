@@ -10,11 +10,9 @@ RUN_TERRAFORM = docker-compose -f infra/docker-compose.yml run --rm terraform
 prepare:
 	npm install
 	docker-compose up -d --build
-	npm run dev $(FRONTEND_PATH)
 
 up:
 	docker-compose up -d
-	npm run dev $(FRONTEND_PATH)
 
 build:
 	docker-compose build

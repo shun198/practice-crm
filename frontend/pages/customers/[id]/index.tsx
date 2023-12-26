@@ -33,7 +33,7 @@ function CustomerDetail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/customers/${router.query.id}/`;
+        const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/customers/${router.query.id}`;
         const csrftoken = Cookies.get("csrftoken") || "";
         const credentials = "include";
         const response = await fetch(apiUrl, {

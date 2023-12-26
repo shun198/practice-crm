@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import Cookies from "js-cookie";
 import router from "next/router";
 import { Button, TextField } from "@mui/material";
-import { ForgotPasswordButton } from "../elements/ForgotPasswordButton";
+import { ForgotPasswordButton } from "../buttons/ForgotPasswordButton";
 import { LoginDataType } from "./type";
 
 function LoginForm() {
@@ -16,7 +16,7 @@ function LoginForm() {
   });
 
   const onSubmit = async (data: LoginDataType) => {
-    const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/login/`;
+    const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/login`;
     const credentials = "include";
     const csrftoken = Cookies.get("csrftoken") || "";
     // ログイン情報をサーバーに送信
