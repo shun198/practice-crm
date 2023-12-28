@@ -15,8 +15,16 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "role",
+            "is_active",
+            "is_verified",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "is_active",
+            "is_verified",
+        ]
 
     def to_representation(self, instance):
         rep = super(UserSerializer, self).to_representation(instance)

@@ -23,7 +23,6 @@ type CustomerArray = CustomerData[];
 function CustomerList() {
   const [data, setData] = useState<CustomerArray>([]);
   const [loggedIn, setLoggedIn] = useState<Boolean>(true); // ログイン状態を管理
-  const [page, setPage] = useState<Number>(1);
 
   const fetchData = async () => {
     try {

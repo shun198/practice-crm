@@ -26,7 +26,51 @@ function UserList() {
   const [data, setData] = useState<UserArray>([]);
   const [loggedIn, setLoggedIn] = useState<Boolean>(true); // ログイン状態を管理
 
-  const fetchData = async () => {
+  const fetchActive = async (id: string) => {
+    try {
+      // fetchAPIの処理を記載する
+      const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/users/${id}/toggle_user_active`;
+      const csrftoken = Cookies.get("csrftoken") || "";
+      const credentials = "include";
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "X-CSRFToken": csrftoken,
+          "Cache-Control": "private",
+        },
+        credentials: credentials,
+      });
+      if (response.ok) {
+        setLoggedIn(true);
+        fetchUserData()
+      } else if (response.status === 403) {
+        setLoggedIn(false);
+        router.push("/"); // ログインしていない場合にルートページにリダイレクト
+      } else if (response.status === 404) {
+        router.replace("/404"); // IDが存在しない場合は404ページへリダイレクト
+      } else if (response.status === 400) {
+        response.json().then((data) => {
+          const msg = data.msg;
+          alert(msg);
+        });
+      } else {
+        alert("エラーが発生しました");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        alert({ message: `${error.message}`, severity: 'error' });
+      }
+    }
+  };
+
+
+  const switchHandler = (switchData: { id: String}) => {
+    fetchActive(switchData.id);
+  };
+
+  const fetchUserData = async () => {
     try {
       const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/users`;
       const csrftoken = Cookies.get("csrftoken") || "";
@@ -55,7 +99,7 @@ function UserList() {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchUserData();
   }, []);
 
   useEffect(() => {
@@ -116,11 +160,14 @@ function UserList() {
               <TableCell align="center">{item.email}</TableCell>
               <TableCell align="center">{item.role}</TableCell>
               <TableCell align="center">
-                <Switch checked={item.is_active} />
+                <Switch 
+                  checked={item.is_active}
+                  onChange={()=>switchHandler({id: item.id})}
+                />
               </TableCell>
               <TableCell align="center">
                 <Button
-                  disabled={!item.is_active || item.is_verified}
+                  disabled={item.is_verified}
                   size="small"
                   variant="contained"
                   color="success"
