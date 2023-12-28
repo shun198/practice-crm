@@ -7,7 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
-function ResetPasswordDialog() {
+function InviteUserDialog() {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -49,4 +49,4 @@ function ResetPasswordDialog() {
   );
 }
 
-export default ResetPasswordDialog;
+export default InviteUserDialog;

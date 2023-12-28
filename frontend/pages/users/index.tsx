@@ -9,6 +9,7 @@ import TableCell from "@mui/material/TableCell";
 import { BasicMenu } from "@/components/buttons/MenuButton";
 import { Switch, Button } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import InviteUserDialog from "@/components/dialogs/InviteUserDialog";
 
 type UserData = {
   id: number;
@@ -44,7 +45,7 @@ function UserList() {
       });
       if (response.ok) {
         setLoggedIn(true);
-        fetchUserData()
+        fetchUserData();
       } else if (response.status === 403) {
         setLoggedIn(false);
         router.push("/"); // ログインしていない場合にルートページにリダイレクト
@@ -60,13 +61,12 @@ function UserList() {
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert({ message: `${error.message}`, severity: 'error' });
+        alert({ message: `${error.message}`, severity: "error" });
       }
     }
   };
 
-
-  const switchHandler = (switchData: { id: String}) => {
+  const switchHandler = (switchData: { id: String }) => {
     fetchActive(switchData.id);
   };
 
@@ -160,9 +160,9 @@ function UserList() {
               <TableCell align="center">{item.email}</TableCell>
               <TableCell align="center">{item.role}</TableCell>
               <TableCell align="center">
-                <Switch 
+                <Switch
                   checked={item.is_active}
-                  onChange={()=>switchHandler({id: item.id})}
+                  onChange={() => switchHandler({ id: item.id })}
                 />
               </TableCell>
               <TableCell align="center">
@@ -189,6 +189,7 @@ function UserList() {
             </TableBody>
           ))}
         </Table>
+        <InviteUserDialog />
       </div>
     </div>
   );
