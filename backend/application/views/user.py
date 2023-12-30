@@ -16,7 +16,7 @@ from application.serializers.user import (
 )
 from application.utils.logs import LoggerName
 from django.contrib.auth import update_session_auth_hash
-from django.db import DatabaseError, transaction
+from django.db import DatabaseError
 from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
 from django.utils import timezone

@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
+import router from "next/router";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -64,9 +65,9 @@ function InviteUserDialog() {
         response.json().then((data) => {
           const msg = data.msg;
           alert(msg);
-          handleClose();
+          window.location.reload();
         });
-      } else if (response.status === 403) {
+      } else if (response.status === 401 || 403) {
         setLoggedIn(false);
       } else if (response.status === 400) {
         setLoggedIn(true);

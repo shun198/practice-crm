@@ -48,7 +48,7 @@ function CustomerDetail() {
           const responseData: CustomerDetailData = await response.json();
           setData(responseData);
           setLoggedIn(true);
-        } else if (response.status === 403) {
+        } else if (response.status === 401 || 403) {
           setLoggedIn(false);
           router.push("/"); // ログインしていない場合にルートページにリダイレクト
         } else if (response.status === 404) {

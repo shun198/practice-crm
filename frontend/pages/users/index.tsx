@@ -46,7 +46,7 @@ function UserList() {
       if (response.ok) {
         setLoggedIn(true);
         fetchUserData();
-      } else if (response.status === 403) {
+      } else if (response.status === 401 || 403) {
         setLoggedIn(false);
         router.push("/"); // ログインしていない場合にルートページにリダイレクト
       } else if (response.status === 404) {
@@ -88,7 +88,7 @@ function UserList() {
         const responseData: UserArray = await response.json();
         setData(responseData);
         setLoggedIn(true);
-      } else if (response.status === 403) {
+      } else if (response.status === 401 || 403) {
         setLoggedIn(false);
       } else {
         alert("エラーが発生しました");

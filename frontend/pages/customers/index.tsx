@@ -42,7 +42,7 @@ function CustomerList() {
         const responseData: CustomerArray = await response.json();
         setData(responseData);
         setLoggedIn(true);
-      } else if (response.status === 403) {
+      } else if (response.status === 401 || 403) {
         setLoggedIn(false);
       } else {
         alert("エラーが発生しました");
