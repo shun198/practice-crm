@@ -9,3 +9,8 @@ export type InviteUserType = {
   email: string;
   role: BigInteger;
 };
+
+export type RadioType = {
+  label: string;
+  value: string | boolean;
+}[];

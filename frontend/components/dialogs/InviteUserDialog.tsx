@@ -11,14 +11,13 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-  FormControl,
-  FormHelperText,
 } from "@mui/material";
 import { InviteUserType } from "../forms/type";
 
 function InviteUserDialog() {
+
   const [loggedIn, setLoggedIn] = useState<Boolean>(true); // ログイン状態を管理
-  const [value, setValue] = useState("female");
+  const [value, setValue] = useState("0");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
   };
@@ -33,6 +32,7 @@ function InviteUserDialog() {
   });
 
   const [open, setOpen] = useState(false);
+
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -68,6 +68,15 @@ function InviteUserDialog() {
         });
       } else if (response.status === 403) {
         setLoggedIn(false);
+      } else if (response.status === 400) {
+        setLoggedIn(true);
+        response.json().then((data) => {
+          console.log(data)
+          for (const key in data) {
+            alert(data[key]);
+          }
+          handleClose();
+        });
       } else {
         alert("エラーが発生しました");
       }
@@ -165,8 +174,8 @@ function InviteUserDialog() {
               defaultValue="0"
               onChange={handleChange}
             >
-              <FormControlLabel value="0" control={<Radio />} label="管理者" />
-              <FormControlLabel value="1" control={<Radio />} label="一般" />
+            <FormControlLabel value="0" control={<Radio {...register("role", { value: "0" })} />} label="管理者" />
+            <FormControlLabel value="1" control={<Radio {...register("role", { value: "1" })} />} label="一般" />
             </RadioGroup>
           </DialogContent>
           <DialogActions>
