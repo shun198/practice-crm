@@ -2,19 +2,6 @@ import secrets
 from datetime import timedelta
 from logging import getLogger
 
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.hashers import make_password
-from django.db import DatabaseError, transaction
-from django.http import HttpResponse, JsonResponse
-from django.middleware.csrf import get_token
-from django.utils import timezone
-from django.utils.crypto import get_random_string
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
-
 from application.emails import send_invitation_email, send_reset_email
 from application.models.user import User, UserInvitation, UserResetPassword
 from application.permissions import IsManagementUser
@@ -28,7 +15,17 @@ from application.serializers.user import (
     VerifyUserSerializer,
 )
 from application.utils.logs import LoggerName
+from django.contrib.auth import update_session_auth_hash
+from django.db import DatabaseError, transaction
+from django.http import HttpResponse, JsonResponse
+from django.middleware.csrf import get_token
+from django.utils import timezone
 from project.settings.environment import django_settings
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 
 class UserViewSet(ModelViewSet):
@@ -147,42 +144,26 @@ class UserViewSet(ModelViewSet):
         """
         # Userの新規登録と招待用トークンを作成する
         serializer = self.get_serializer(data=request.data)
-        # バリデーションに失敗したら400を返す
         serializer.is_valid(raise_exception=True)
-        try:
-            with transaction.atomic():
-                user = User.objects.create(
-                    username=serializer.validated_data["name"],
-                    employee_number=serializer.validated_data[
-                        "employee_number"
-                    ],
-                    password=make_password(get_random_string(16)),
-                    email=serializer.validated_data["email"],
-                    created_by=request.user,
-                    updated_by=request.user,
-                )
-                token = secrets.token_urlsafe(64)
-                expiry = timezone.now() + timedelta(days=1)
-                UserInvitation.objects.create(
-                    token=token, user=user, expiry=expiry
-                )
-                base_url = django_settings.BASE_URL
-                # 初回登録用のURLへ遷移
-                url = base_url + "/verify-user/" + token
-                send_invitation_email(
-                    email=user.email,
-                    url=url,
-                )
-                return JsonResponse(
-                    data={"msg": "招待メールを送信しました"},
-                    status=status.HTTP_200_OK,
-                )
-        except DatabaseError as e:
-            self.emergency_logger.error(e)
-            return JsonResponse(
-                data={"msg": "ユーザの登録に失敗しました"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        user = serializer.create(
+            serializer.validated_data,
+            created_by=request.user,
+            updated_by=request.user,
+        )
+        token = secrets.token_urlsafe(64)
+        expiry = timezone.now() + timedelta(days=1)
+        UserInvitation.objects.create(token=token, user=user, expiry=expiry)
+        base_url = django_settings.BASE_URL
+        # 初回登録用のURLへ遷移
+        url = base_url + "/verify-user/" + token
+        send_invitation_email(
+            email=user.email,
+            url=url,
+        )
+        return JsonResponse(
+            data={"msg": "招待メールを送信しました"},
+            status=status.HTTP_200_OK,
+        )
 
     @action(detail=False, methods=["post"])
     def verify_user(self, request):
@@ -199,27 +180,18 @@ class UserViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         user_invitation = self._check_invitation(serializer.data["token"])
         if user_invitation is None:
             return JsonResponse(
                 data={"msg": "こちらのURLは有効期限切れです"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        try:
-            with transaction.atomic():
-                user_invitation.is_used = True
-                user_invitation.save()
-                user = user_invitation.user
-                user.is_verified = True
-                user.set_password(serializer.validated_data["new_password"])
-                user.save()
-        except DatabaseError as e:
-            self.emergency_logger.error(e)
-            return JsonResponse(
-                data={"msg": "新規ユーザの認証に失敗しました"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        user_invitation.is_used = True
+        user_invitation.save()
+        user = user_invitation.user
+        user.is_verified = True
+        user.set_password(serializer.validated_data["new_password"])
+        user.save()
         return JsonResponse(
             data={"msg": "新規ユーザの認証に成功しました"},
             status=status.HTTP_200_OK,
@@ -328,41 +300,28 @@ class UserViewSet(ModelViewSet):
 
     @action(detail=False, methods=["post"])
     def reset_password(self, request):
-        """パスワードを再設定するAPI
+        """パスワード再設定用API
 
         Args:
-            request : リクエスト
+            request: リクエスト
 
         Returns:
             JsonResponse
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user_reset_password = self._check_reset_password(
-            serializer.data["token"]
-        )
-        if user_reset_password is None:
+        reset_password = self.check_reset_password(serializer.data["token"])
+        if reset_password is None:
             return JsonResponse(
-                data={"msg": "こちらのURLは有効期限切れです"},
+                data={"msg": "有効期限切れのリンクです。管理者に再送信を依頼してください。"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        try:
-            with transaction.atomic():
-                user = user_reset_password.user
-                user.set_password(serializer.validated_data["new_password"])
-                user_reset_password.is_used = True
-                user_reset_password.save()
-                user.save()
-        except DatabaseError as e:
-            self.emergency_logger.error(e)
-            return JsonResponse(
-                data={"msg": "ユーザのパスワード再設定に失敗しました"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        return JsonResponse(
-            data={"msg": "ユーザのパスワード再設定に成功しました"},
-            status=status.HTTP_200_OK,
-        )
+        user = reset_password.user
+        user.set_password(serializer.data["password"])
+        reset_password.is_used = True
+        reset_password.save()
+        user.save()
+        return JsonResponse(data={"msg": "パスワードの再設定が完了しました"})
 
     @action(detail=False, methods=["post"])
     def check_reset_password_token(self, request):

@@ -59,15 +59,22 @@ class VerifyUserSerializer(serializers.Serializer):
         return data
 
 
-class InviteUserSerializer(serializers.Serializer):
+class InviteUserSerializer(serializers.ModelSerializer):
     """ユーザ招待用シリアライザ"""
 
-    employee_number = serializers.CharField(min_length=8, max_length=8)
-    """社員番号"""
-    name = serializers.CharField(max_length=255)
-    """社員指氏名"""
-    email = serializers.EmailField(max_length=254)
-    """社員メールアドレス"""
+    def create(self, validated_data, created_by, updated_by):
+        return User.objects.create_user(
+            created_by=created_by, updated_by=updated_by, **validated_data
+        )
+
+    class Meta:
+        model = User
+        fields = [
+            "employee_number",
+            "username",
+            "role",
+            "email",
+        ]
 
 
 class ResetPasswordSerializer(serializers.Serializer):
