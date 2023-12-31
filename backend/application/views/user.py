@@ -47,7 +47,7 @@ class UserViewSet(ModelViewSet):
                 return CheckTokenSerializer
             case "send_reset_password_email":
                 return SendResetPasswordEmailSerializer
-            case "toggle_user_active" | "get_csrf_token" | "user_info":
+            case "toggle_user_active" | "get_csrf_token" | "user_info" | "reinvite_user":
                 return None
             case _:
                 return UserSerializer

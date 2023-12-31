@@ -98,6 +98,43 @@ function UserList() {
     }
   };
 
+  const reinviteUserHandler = async (id: String) => {
+    try {
+      const apiUrl = `${process.env["NEXT_PUBLIC_API_URL"]}/api/users/${id}/reinvite_user`;
+      const csrftoken = Cookies.get("csrftoken") || "";
+      const credentials = "include";
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrftoken,
+        },
+        credentials: credentials,
+      });
+
+      if (response.ok) {
+        setLoggedIn(true);
+        response.json().then((data) => {
+          const msg = data.msg;
+          alert(msg);
+        });
+      } else if (response.status === 401 || 403) {
+        setLoggedIn(false);
+      } else if (response.status === 400) {
+        setLoggedIn(true);
+        response.json().then((data) => {
+          const msg = data.msg;
+          alert(msg);
+        });
+      } else {
+        alert("エラーが発生しました");
+      }
+    } catch (error) {
+      console.error("データの取得に失敗しました:", error);
+    }
+  };
+
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -164,6 +201,7 @@ function UserList() {
                   variant="contained"
                   color="success"
                   className="w-[100px] my-[10px]"
+                  onClick={() => reinviteUserHandler(item.id)}
                 >
                   再送信
                   <SendIcon />
