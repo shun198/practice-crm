@@ -28,7 +28,11 @@ from application.utils.logs import LoggerName
 
 
 class CustomerViewSet(ModelViewSet):
-    queryset = Customer.objects.select_related("address")
+    queryset = (
+        Customer.objects.select_related("address")
+        .select_related("created_by")
+        .all()
+    )
     permission_classes = [IsAuthenticated]
     filter_backends = [
         DjangoFilterBackend,
