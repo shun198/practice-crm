@@ -10,7 +10,19 @@ export type InviteUserType = {
   role: BigInteger;
 };
 
-export type RadioType = {
-  label: string;
-  value: string | boolean;
-}[];
+export type CreateUserType = {
+  customer: {
+    name: string;
+    kana: string;
+    email: string;
+    phone_no: string;
+    birthday: string;
+  };
+  address: {
+    prefecture: string;
+    municipalities: string;
+    house_no: string;
+    other: string;
+    post_no: string;
+  };
+}

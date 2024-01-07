@@ -9,6 +9,7 @@ import TableCell from "@mui/material/TableCell";
 import { BasicMenu } from "@/components/buttons/MenuButton";
 import { Button } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
+import CreateUserDialog from "@/components/dialogs/CreateUserDialog";
 
 type CustomerData = {
   id: number;
@@ -72,15 +73,7 @@ function CustomerList() {
         <h1 className="text-3xl text-gray-900">お客様情報一覧</h1>
       </div>
       <div className="flex flex-col items-end my-[10px]">
-        <Button
-          type="submit"
-          size="medium"
-          variant="contained"
-          color="primary"
-          className="grid justify-items-end w-[200px] my-[20px]"
-        >
-          お客様登録
-        </Button>
+        <CreateUserDialog/>
       </div>
       <div>
         <Table>
