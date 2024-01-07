@@ -25,4 +25,4 @@ export type CreateUserType = {
     other: string;
     post_no: string;
   };
-}
+};

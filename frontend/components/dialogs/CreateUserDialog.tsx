@@ -8,14 +8,13 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { CreateUserType } from "../forms/type";
 
 function CreateUserDialog() {
-
   const [loggedIn, setLoggedIn] = useState<Boolean>(true); // ログイン状態を管理
 
   const {
@@ -28,7 +27,6 @@ function CreateUserDialog() {
   });
 
   const [open, setOpen] = useState(false);
-
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -67,10 +65,10 @@ function CreateUserDialog() {
       } else if (response.status === 400) {
         setLoggedIn(true);
         response.json().then((data) => {
-          console.log(data)
+          console.log(data);
           for (const key in data) {
             alert(data[key]);
-            console.log(data[key])
+            console.log(data[key]);
           }
           handleClose();
         });
@@ -160,7 +158,9 @@ function CreateUserDialog() {
               })}
             />
             {errors.customer?.email?.message && (
-              <div className="text-red-500">{errors.customer?.email.message}</div>
+              <div className="text-red-500">
+                {errors.customer?.email.message}
+              </div>
             )}
             <TextField
               className="w-[400px] my-[10px]"
@@ -175,13 +175,15 @@ function CreateUserDialog() {
                   message: "電話番号を入力してください",
                 },
                 pattern: {
-                    value: /^[0-9]{10,11}$/,
-                    message: "10桁または11桁の数字のみ入力してください",
-                  },
+                  value: /^[0-9]{10,11}$/,
+                  message: "10桁または11桁の数字のみ入力してください",
+                },
               })}
             />
             {errors.customer?.phone_no?.message && (
-              <div className="text-red-500">{errors.customer?.phone_no.message}</div>
+              <div className="text-red-500">
+                {errors.customer?.phone_no.message}
+              </div>
             )}
             {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker']}>
@@ -269,9 +271,9 @@ function CreateUserDialog() {
                   message: "郵便番号を入力してください",
                 },
                 pattern: {
-                    value: /^[0-9]{7}$/,
-                    message: "7桁の数字のみ入力してください",
-                  },
+                  value: /^[0-9]{7}$/,
+                  message: "7桁の数字のみ入力してください",
+                },
               })}
             />
             {errors.address?.post_no?.message && (

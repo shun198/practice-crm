@@ -73,7 +73,7 @@ function CustomerList() {
         <h1 className="text-3xl text-gray-900">お客様情報一覧</h1>
       </div>
       <div className="flex flex-col items-end my-[10px]">
-        <CreateUserDialog/>
+        <CreateUserDialog />
       </div>
       <div>
         <Table>
