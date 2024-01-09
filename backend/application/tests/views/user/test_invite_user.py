@@ -18,7 +18,8 @@ def post_invite_user_data():
     """社員招待用のインプットデータ"""
     return {
         "employee_number": "99999990",
-        "name": "テストユーザ01",
+        "username": "テストユーザ01",
+        "role": User.Role.MANAGEMENT.value,
         "email": "test_user@test.com",
     }
 
