@@ -1,13 +1,12 @@
 from datetime import timedelta
 
 import pytest
-from django.utils import timezone
-from freezegun import freeze_time
-from rest_framework import status
-
 from application.models import User, UserInvitation
 from application.tests.factories.user import UserFactory
 from application.tests.factories.user_invitation import UserInvitationFactory
+from django.utils import timezone
+from freezegun import freeze_time
+from rest_framework import status
 
 
 @pytest.fixture
@@ -108,7 +107,7 @@ def test_cannot_verify_user_without_token(
         format="json",
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"msg": "こちらのURLは有効期限切れです"}
+    assert response.json() == {"msg": "有効期限切れのリンクです。管理者に再送信を依頼してください"}
 
 
 @pytest.mark.django_db
@@ -140,6 +139,6 @@ def test_cannot_verify_user_token_with_expired_token(
             format="json",
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.json() == {"msg": "こちらのURLは有効期限切れです"}
+        assert response.json() == {"msg": "有効期限切れのリンクです。管理者に再送信を依頼してください"}
         assert not User.objects.get(id=user.id).is_verified
         assert not UserInvitation.objects.get(id=invitation.id).is_used

@@ -1,17 +1,14 @@
 from datetime import timedelta
 
 import pytest
+from application.models import User, UserResetPassword
+from application.tests.common_method import mail_confirm
+from application.tests.factories.user import UserFactory
+from application.tests.factories.user_reset_password import UserResetPasswordFactory
 from django.core import mail
 from django.utils import timezone
 from freezegun import freeze_time
 from rest_framework import status
-
-from application.models import User, UserResetPassword
-from application.tests.common_method import mail_confirm
-from application.tests.factories.user import UserFactory
-from application.tests.factories.user_reset_password import (
-    UserResetPasswordFactory,
-)
 
 
 @pytest.fixture
@@ -135,7 +132,7 @@ def test_reset_password(
     user = User.objects.get(id=user.id)
     reset_password = UserResetPassword.objects.get(user_id=user.id)
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"msg": "ユーザのパスワード再設定に成功しました"}
+    assert response.json() == {"msg": "パスワードの再設定が完了しました"}
     assert reset_password.user
     assert reset_password.is_used
     assert user.check_password(post_reset_password["new_password"])
@@ -162,4 +159,4 @@ def test_reset_password_token_is_invalid(
             format="json",
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.json() == {"msg": "こちらのURLは有効期限切れです"}
+        assert response.json() == {"msg": "有効期限切れのリンクです。管理者に再送信を依頼してください"}

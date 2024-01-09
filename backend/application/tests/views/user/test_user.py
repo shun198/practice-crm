@@ -1,8 +1,8 @@
 import pytest
 from rest_framework import status
 
-from application.models.user import User
 from application.tests.factories.user import UserFactory
+from application.utils.constants import Group
 
 
 @pytest.fixture
@@ -20,7 +20,7 @@ def user_data():
         "employee_number": "11111111",
         "username": "テストユーザ01",
         "email": "test_user_01@test.com",
-        "role": User.Role.MANAGEMENT,
+        "group": Group.MANAGER.value,
     }
 
 

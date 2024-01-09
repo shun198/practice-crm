@@ -2,17 +2,6 @@ import secrets
 from datetime import timedelta
 from logging import getLogger
 
-from django.contrib.auth import update_session_auth_hash
-from django.db import DatabaseError
-from django.http import HttpResponse, JsonResponse
-from django.middleware.csrf import get_token
-from django.utils import timezone
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
-
 from application.emails import send_invitation_email, send_reset_email
 from application.models.user import User, UserInvitation, UserResetPassword
 from application.permissions import IsManagementUser
@@ -26,7 +15,17 @@ from application.serializers.user import (
     VerifyUserSerializer,
 )
 from application.utils.logs import LoggerName
+from django.contrib.auth import update_session_auth_hash
+from django.db import DatabaseError
+from django.http import HttpResponse, JsonResponse
+from django.middleware.csrf import get_token
+from django.utils import timezone
 from project.settings.environment import django_settings
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 
 class UserViewSet(ModelViewSet):
@@ -184,7 +183,7 @@ class UserViewSet(ModelViewSet):
         user_invitation = self._check_invitation(serializer.data["token"])
         if user_invitation is None:
             return JsonResponse(
-                data={"msg": "こちらのURLは有効期限切れです"},
+                data={"msg": "有効期限切れのリンクです。管理者に再送信を依頼してください"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user_invitation.is_used = True
@@ -311,14 +310,14 @@ class UserViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        reset_password = self.check_reset_password(serializer.data["token"])
+        reset_password = self._check_reset_password(serializer.data["token"])
         if reset_password is None:
             return JsonResponse(
-                data={"msg": "有効期限切れのリンクです。管理者に再送信を依頼してください。"},
+                data={"msg": "有効期限切れのリンクです。管理者に再送信を依頼してください"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user = reset_password.user
-        user.set_password(serializer.data["password"])
+        user.set_password(serializer.validated_data["new_password"])
         reset_password.is_used = True
         reset_password.save()
         user.save()
@@ -370,7 +369,7 @@ class UserViewSet(ModelViewSet):
             # パスワードが社員番号の場合is_initial_passwordはtrue
             data = {
                 "name": request.user.username,
-                "role": User.Role(request.user.role).label,
+                "group": request.user.group.name,
             }
         return JsonResponse(data=data)
 

@@ -19,6 +19,8 @@ def test_user_serializer_to_representation(management_user):
             ("username", management_user.username),
             ("email", management_user.email),
             ("group", management_user.group.name),
+            ("is_active", management_user.is_active),
+            ("is_verified", management_user.is_verified),
         ]
     )
 
@@ -33,7 +35,7 @@ def user_data():
         "employee_number": "1" * 8,
         "username": "テストユーザ01",
         "email": "test@example.com",
-        "group": Group.MANAGER.name,
+        "group": Group.MANAGER.value,
     }
 
 
