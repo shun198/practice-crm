@@ -1,15 +1,16 @@
 from logging import getLogger
 
-from application.models.user import User
-from application.serializers.user import LoginSerializer, UserSerializer
-from application.utils.logs import LoggerName
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, JsonResponse
-from project.settings.environment import django_settings
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet, ViewSet
+
+from application.models.user import User
+from application.serializers.user import LoginSerializer, UserSerializer
+from application.utils.logs import LoggerName
+from project.settings.environment import django_settings
 
 
 class UserViewSet(ModelViewSet):
@@ -38,7 +39,9 @@ class LoginViewSet(ViewSet):
             )
         else:
             login(request, user)
-            return JsonResponse(data={"username": user.username,"group": user.group.name})
+            return JsonResponse(
+                data={"username": user.username, "group": user.group.name}
+            )
 
     @action(methods=["POST"], detail=False)
     def logout(self, request):
@@ -48,7 +51,12 @@ class LoginViewSet(ViewSet):
 
 
 if django_settings.DJANGO_SETTINGS_MODULE == "project.settings.local":
-    from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema
+    from drf_spectacular.utils import (
+        OpenApiExample,
+        OpenApiResponse,
+        extend_schema,
+    )
+
     extend_schema(
         request=LoginSerializer,
         examples=[
@@ -73,7 +81,7 @@ if django_settings.DJANGO_SETTINGS_MODULE == "project.settings.local":
                     summary={
                         "ログイン成功時のレスポンス",
                     },
-                    value={"username": "管理者ユーザ01","group": "管理者"},
+                    value={"username": "管理者ユーザ01", "group": "管理者"},
                     request_only=False,
                     response_only=True,
                 )
@@ -81,7 +89,7 @@ if django_settings.DJANGO_SETTINGS_MODULE == "project.settings.local":
         ),
         summary="システムユーザーのログイン",
     )(LoginViewSet.login)
-    
+
     extend_schema(
         request=None,
         responses={

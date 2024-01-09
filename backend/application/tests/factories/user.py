@@ -4,6 +4,7 @@ from factory import Faker, PostGenerationMethodCall, Sequence
 from factory.django import DjangoModelFactory
 
 from application.models import User
+from application.utils.constants import Group
 
 
 class UserFactory(DjangoModelFactory):
@@ -14,11 +15,7 @@ class UserFactory(DjangoModelFactory):
     employee_number = Sequence(lambda n: "{0:08}".format(n + 100))
     password = PostGenerationMethodCall("set_password", "test")
     email = Faker("email")
-    role = Faker(
-        "random_int",
-        min=0,
-        max=2,
-    )
+    group_id = Group.MANAGER.value
     created_at = Faker(
         "date_between_dates",
         date_start=(datetime.now() - timedelta(days=20)).date(),

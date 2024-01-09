@@ -4,6 +4,7 @@ import pytest
 
 from application.models import User
 from application.serializers.user import UserSerializer
+from application.utils.constants import Group
 
 
 @pytest.mark.django_db
@@ -17,7 +18,7 @@ def test_user_serializer_to_representation(management_user):
             ("employee_number", management_user.employee_number),
             ("username", management_user.username),
             ("email", management_user.email),
-            ("role", management_user.get_role_display()),
+            ("group", management_user.group.name),
         ]
     )
 
@@ -32,7 +33,7 @@ def user_data():
         "employee_number": "1" * 8,
         "username": "テストユーザ01",
         "email": "test@example.com",
-        "role": User.Role.GENERAL,
+        "group": Group.MANAGER.name,
     }
 
 

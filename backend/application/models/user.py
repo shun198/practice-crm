@@ -1,10 +1,11 @@
 import uuid
 
-from application.managers import UserManager
 from django.contrib.auth.models import AbstractUser, Group
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
 from django.db import models
+
+from application.managers import UserManager
 
 
 class User(AbstractUser):
@@ -16,7 +17,8 @@ class User(AbstractUser):
     first_name = None
     last_name = None
     date_joined = None
-    groups = models.ForeignKey(
+    groups = None
+    group = models.ForeignKey(
         Group,
         on_delete=models.PROTECT,
         related_name="users",

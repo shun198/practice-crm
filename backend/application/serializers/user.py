@@ -1,6 +1,7 @@
-from application.models import User
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+
+from application.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
             "employee_number",
             "username",
             "email",
-            "role",
+            "group",
             "is_active",
             "is_verified",
         ]
@@ -27,7 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super(UserSerializer, self).to_representation(instance)
-        rep["role"] = instance.get_role_display()
+        rep["group"] = instance.group.name
         return rep
 
 
@@ -71,7 +72,7 @@ class InviteUserSerializer(serializers.ModelSerializer):
         fields = [
             "employee_number",
             "username",
-            "role",
+            "group",
             "email",
         ]
 

@@ -1,9 +1,10 @@
 import pytest
+from django.core.management import call_command
+from rest_framework.test import APIClient
+
 from application.models.user import User
 from application.tests.factories.user import UserFactory
 from application.utils.constants import Group
-from django.core.management import call_command
-from rest_framework.test import APIClient
 
 
 @pytest.fixture(scope="session")

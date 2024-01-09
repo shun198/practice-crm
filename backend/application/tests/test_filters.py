@@ -1,12 +1,16 @@
 from datetime import timedelta
 
 import pytest
-from application.filters import CustomerFilter, UserFilter
-from application.models import User
-from application.tests.factories.customer import AddressFactory, CustomerFactory
-from application.tests.factories.user import UserFactory
 from django.utils import timezone
 from freezegun import freeze_time
+
+from application.filters import CustomerFilter, UserFilter
+from application.models import User
+from application.tests.factories.customer import (
+    AddressFactory,
+    CustomerFactory,
+)
+from application.tests.factories.user import UserFactory
 
 
 @pytest.mark.django_db

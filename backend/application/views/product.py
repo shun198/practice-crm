@@ -1,8 +1,9 @@
-from application.models import Product
-from application.serializers.product import ProductSerializer
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+
+from application.models import Product
+from application.serializers.product import ProductSerializer
 
 
 class ProductViewSet(ModelViewSet):

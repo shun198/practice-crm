@@ -1,7 +1,8 @@
 import pytest
+from django.db.utils import DataError, IntegrityError
+
 from application.models import User
 from application.tests.factories.user import UserFactory
-from django.db.utils import DataError, IntegrityError
 
 
 def get_user(id):
@@ -102,4 +103,3 @@ def test_email_must_be_unique():
     UserFactory(email=email)
     with pytest.raises(IntegrityError):
         UserFactory(email=email)
-

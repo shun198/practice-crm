@@ -26,7 +26,10 @@ def test_management_user_can_login(
         format="json",
     )
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"role": "MANAGEMENT"}
+    assert response.json() == {
+        "username": management_user.username,
+        "group": management_user.group.name,
+    }
 
 
 @pytest.mark.django_db
@@ -41,7 +44,10 @@ def test_general_user_can_login(client, general_user, password, get_login_url):
         format="json",
     )
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"role": "GENERAL"}
+    assert response.json() == {
+        "username": general_user.username,
+        "group": general_user.group.name,
+    }
 
 
 @pytest.mark.django_db
