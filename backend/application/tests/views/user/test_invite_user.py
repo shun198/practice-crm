@@ -1,11 +1,9 @@
 import pytest
-from django.core import mail
-from django.db import DatabaseError
-from rest_framework import status
-
 from application.models import User, UserInvitation
 from application.tests.common_method import mail_confirm
 from application.utils.constants import Group
+from django.core import mail
+from rest_framework import status
 
 
 @pytest.fixture

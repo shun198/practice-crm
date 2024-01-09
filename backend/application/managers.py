@@ -10,6 +10,7 @@ class UserManager(BaseUserManager):
         self,
         username: str,
         employee_number: str,
+        group: Group,
         **extra_fields,
     ):
         """システム利用者を作成
@@ -22,12 +23,12 @@ class UserManager(BaseUserManager):
             作成したシステム利用者
         """
 
-        group, _ = Group.objects.get_or_create(name=extra_fields["group"])
+        group, _ = Group.objects.get_or_create(name=group.name)
 
         user = self.model(
             username=username,
             employee_number=employee_number,
-            group_id=group.id,
+            group=group,
             **extra_fields,
         )
         # 初期バスワードは社員番号
