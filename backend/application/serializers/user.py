@@ -1,7 +1,8 @@
-from application.models import User
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+
+from application.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -75,7 +76,7 @@ class InviteUserSerializer(serializers.ModelSerializer):
             "group",
             "email",
         ]
-        
+
     def validate_group(self, value):
         try:
             data = Group.objects.get(name=value)

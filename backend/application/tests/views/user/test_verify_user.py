@@ -1,12 +1,13 @@
 from datetime import timedelta
 
 import pytest
-from application.models import User, UserInvitation
-from application.tests.factories.user import UserFactory
-from application.tests.factories.user_invitation import UserInvitationFactory
 from django.utils import timezone
 from freezegun import freeze_time
 from rest_framework import status
+
+from application.models import User, UserInvitation
+from application.tests.factories.user import UserFactory
+from application.tests.factories.user_invitation import UserInvitationFactory
 
 
 @pytest.fixture

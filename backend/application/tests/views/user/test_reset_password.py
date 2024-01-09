@@ -1,14 +1,17 @@
 from datetime import timedelta
 
 import pytest
-from application.models import User, UserResetPassword
-from application.tests.common_method import mail_confirm
-from application.tests.factories.user import UserFactory
-from application.tests.factories.user_reset_password import UserResetPasswordFactory
 from django.core import mail
 from django.utils import timezone
 from freezegun import freeze_time
 from rest_framework import status
+
+from application.models import User, UserResetPassword
+from application.tests.common_method import mail_confirm
+from application.tests.factories.user import UserFactory
+from application.tests.factories.user_reset_password import (
+    UserResetPasswordFactory,
+)
 
 
 @pytest.fixture
