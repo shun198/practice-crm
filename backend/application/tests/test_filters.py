@@ -1,16 +1,12 @@
 from datetime import timedelta
 
 import pytest
-from django.utils import timezone
-from freezegun import freeze_time
-
 from application.filters import CustomerFilter, UserFilter
 from application.models import User
-from application.tests.factories.customer import (
-    AddressFactory,
-    CustomerFactory,
-)
+from application.tests.factories.customer import AddressFactory, CustomerFactory
 from application.tests.factories.user import UserFactory
+from django.utils import timezone
+from freezegun import freeze_time
 
 
 @pytest.mark.django_db
@@ -31,18 +27,6 @@ def test_user_filter_email_contains():
     user_filter = UserFilter({"email__contains": "test_filter"})
     assert user_filter.qs.count() == 1
     assert user_filter.qs[0] == user
-
-
-@pytest.mark.django_db
-def test_user_filter_role_in():
-    """ロールを複数フィルターできる事を確認する"""
-
-    User.objects.all().update(role=User.Role.GENERAL)
-    management_user = UserFactory(role=User.Role.MANAGEMENT)
-    user_filter = UserFilter({"role__in": f"{User.Role.MANAGEMENT}"})
-    assert user_filter.qs.count() == 1
-    assert user_filter.qs[0] == management_user
-    assert user_filter.qs[1] == management_user
 
 
 @pytest.mark.django_db

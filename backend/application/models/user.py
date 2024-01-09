@@ -1,6 +1,7 @@
 import uuid
 
-from django.contrib.auth.models import AbstractUser
+from application.managers import UserManager
+from django.contrib.auth.models import AbstractUser, Group
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
 from django.db import models
@@ -11,22 +12,16 @@ class User(AbstractUser):
 
     username_validator = UnicodeUsernameValidator()
 
-    class Role(models.IntegerChoices):
-        """システムユーザのロール
-
-        Args:
-            MANAGEMENT(0): 管理者
-            GENERAL(1):    一般
-        """
-
-        MANAGEMENT = 0, "管理者"
-        GENERAL = 1, "一般"
-
     # 不要なフィールドはNoneにすることができる
     first_name = None
     last_name = None
     date_joined = None
-    groups = None
+    groups = models.ForeignKey(
+        Group,
+        on_delete=models.PROTECT,
+        related_name="users",
+        db_comment="システム利用者権限テーブルの外部キー",
+    )
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -49,11 +44,6 @@ class User(AbstractUser):
         max_length=254,
         unique=True,
         db_comment="メールアドレス",
-    )
-    role = models.PositiveIntegerField(
-        choices=Role.choices,
-        default=Role.MANAGEMENT,
-        db_comment="システムユーザのロール",
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -84,6 +74,9 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "employee_number"
     REQUIRED_FIELDS = ["email", "username"]
+
+    objects = UserManager()
+    """Userモデルクラスとシステム利用者を作成する為のクラスを紐付ける"""
 
     class Meta:
         ordering = ["employee_number"]

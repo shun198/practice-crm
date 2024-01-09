@@ -1,8 +1,7 @@
 import pytest
-from django.db.utils import DataError, IntegrityError
-
 from application.models import User
 from application.tests.factories.user import UserFactory
+from django.db.utils import DataError, IntegrityError
 
 
 def get_user(id):
@@ -104,18 +103,3 @@ def test_email_must_be_unique():
     with pytest.raises(IntegrityError):
         UserFactory(email=email)
 
-
-@pytest.mark.django_db
-def test_role_can_be_management():
-    """管理者のロール"""
-    role = User.Role.MANAGEMENT
-    user = UserFactory(role=role)
-    assert get_user(user.id).role == role
-
-
-@pytest.mark.django_db
-def test_role_can_be_general():
-    """一般のロール"""
-    role = User.Role.GENERAL
-    user = UserFactory(role=role)
-    assert get_user(user.id).role == role

@@ -17,7 +17,7 @@ def send_invitation_email(email, url):
             "url": url,
         },
     )
-    
+
     msg = EmailMultiAlternatives(
         subject="アカウント登録のお知らせ",
         body=plaintext,

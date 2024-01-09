@@ -1,8 +1,7 @@
 import django_filters
+from application.models import Customer, User
 from django.db.models import Q
 from django.db.models.functions import Concat
-
-from application.models import Customer, User
 
 
 class UserFilter(django_filters.FilterSet):
@@ -15,7 +14,6 @@ class UserFilter(django_filters.FilterSet):
         fields = {
             "username": ["contains"],
             "email": ["contains"],
-            "role": ["in"],
         }
 
 

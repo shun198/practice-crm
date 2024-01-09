@@ -1,9 +1,9 @@
 import pytest
-from django.core.management import call_command
-from rest_framework.test import APIClient
-
 from application.models.user import User
 from application.tests.factories.user import UserFactory
+from application.utils.constants import Group
+from django.core.management import call_command
+from rest_framework.test import APIClient
 
 
 @pytest.fixture(scope="session")
@@ -21,7 +21,7 @@ def client(scope="session"):
 def management_user(password):
     return UserFactory(
         password=password,
-        role=User.Role.MANAGEMENT,
+        group_id=Group.MANAGER.value,
     )
 
 
@@ -29,7 +29,7 @@ def management_user(password):
 def general_user(password):
     return UserFactory(
         password=password,
-        role=User.Role.GENERAL,
+        group_id=Group.GENERAL.value,
     )
 
 
