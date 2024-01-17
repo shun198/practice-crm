@@ -4,6 +4,7 @@ from logging import getLogger
 
 import chardet
 from botocore.exceptions import ClientError
+from django.conf import settings
 from django.db import DatabaseError, transaction
 from django.http import FileResponse, JsonResponse
 from django.utils import timezone
@@ -24,10 +25,8 @@ from application.serializers.customer import (
     DetailCustomerSerializer,
     ImportCsvSerializer,
     ListCustomerSerializer,
-    SendSMSSerializer,
 )
 from application.utils.logs import LoggerName
-from project.settings.local import sns_client
 
 
 class CustomerViewSet(ModelViewSet):
@@ -53,8 +52,6 @@ class CustomerViewSet(ModelViewSet):
                 return CreateAndUpdateCustomerSerializer
             case "csv_import":
                 return ImportCsvSerializer
-            case "send_sms":
-                return SendSMSSerializer
             case _:
                 return None
 
@@ -194,21 +191,18 @@ class CustomerViewSet(ModelViewSet):
                 return JsonResponse(data={"msg": f"csvファイルのimportに失敗しました。"})
         return JsonResponse(data={"msg": "csvファイルのimportに成功しました"})
 
-    @transaction.atomic
     @action(methods=["post"], detail=True)
     def send_sms(self, request, pk):
         customer = self.get_object()
-        serializer = self.get_serializer(
-            customer,
-            data=request.data,
-        )
-        serializer.is_valid(raise_exception=True)
-        message = serializer.validated_data["message"]
+        message = f"{customer.name}様\n問い合わせありがとうございます"
         try:
-            response = sns_client.publish(
-                PhoneNumber=customer.phone_no, Message=message
+            settings.SNS_CLIENT.publish(
+                PhoneNumber="+81" + customer.phone_no, Message=message
             )
-            return JsonResponse({"data": response["MessageId"]})
+            self.application_logger.info(message)
+            return JsonResponse(
+                {"msg": "SMSの送信に成功しました"},
+            )
         except ClientError as e:
             self.application_logger.warning(e)
             return JsonResponse(

@@ -24,7 +24,8 @@ STATICFILES_STORAGE = "storages.backends.s3boto3.S3StaticStorage"
 AWS_STORAGE_BUCKET_NAME = aws_settings.AWS_STORAGE_BUCKET_NAME
 
 # Create an SNS client
-client = boto3.client(
+SNS_CLIENT = boto3.client(
     "sns",
     region_name=aws_settings.AWS_DEFAULT_REGION_NAME,
+    endpoint_url=aws_settings.AWS_SNS_ENDPOINT_URL,
 )

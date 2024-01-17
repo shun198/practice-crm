@@ -116,7 +116,3 @@ class CustomerPhotoSerializer(serializers.ModelSerializer):
         rep["photo"] = instance.photo.name.split("/")[-1]
         rep["created_by"] = instance.created_by.username
         return rep
-
-
-class SendSMSSerializer(serializers.Serializer):
-    message = serializers.CharField()
