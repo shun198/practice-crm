@@ -57,7 +57,7 @@ EMAIL_USE_TLS = False
 EMAIL_USE_TLS = False
 
 # Create an SNS client
-client = boto3.client(
+sns_client = boto3.client(
     "sns",
     aws_access_key_id=aws_settings.AWS_ACCESS_KEY_ID,
     aws_secret_access_key=aws_settings.AWS_SECRET_ACCESS_KEY,
