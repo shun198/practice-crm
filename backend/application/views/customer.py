@@ -209,8 +209,12 @@ class CustomerViewSet(ModelViewSet):
                 PhoneNumber=customer.phone_no, Message=message
             )
             return JsonResponse({"data": response["MessageId"]})
-        except ClientError:
-            return JsonResponse({"msg": "SMSを送信できませんでした"})
+        except ClientError as e:
+            self.application_logger.warning(e)
+            return JsonResponse(
+                {"msg": "SMSを送信できませんでした"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     @action(methods=["get"], detail=False)
     def csv_export(self, request):
