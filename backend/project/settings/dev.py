@@ -1,4 +1,6 @@
 """DEV環境用の設定"""
+import boto3
+
 from .base import *
 from .environment import aws_settings
 
@@ -21,3 +23,8 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 STATICFILES_STORAGE = "storages.backends.s3boto3.S3StaticStorage"
 AWS_STORAGE_BUCKET_NAME = aws_settings.AWS_STORAGE_BUCKET_NAME
 
+# Create an SNS client
+client = boto3.client(
+    "sns",
+    region_name=aws_settings.AWS_DEFAULT_REGION_NAME,
+)

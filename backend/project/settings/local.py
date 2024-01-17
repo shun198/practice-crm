@@ -1,5 +1,8 @@
 """LOCAL環境用の設定"""
+import boto3
+
 from .base import *
+from .environment import aws_settings
 
 DEBUG = True
 
@@ -52,3 +55,11 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 1025
 EMAIL_USE_TLS = False
 EMAIL_USE_TLS = False
+
+# Create an SNS client
+client = boto3.client(
+    "sns",
+    aws_access_key_id=aws_settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=aws_settings.AWS_SECRET_ACCESS_KEY,
+    region_name=aws_settings.AWS_DEFAULT_REGION_NAME,
+)
