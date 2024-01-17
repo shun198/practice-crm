@@ -1,7 +1,4 @@
 """LOCAL環境用の設定"""
-# from application.injectors.ses import LocalSesModule, ses_injector
-# from application.injectors.sns import LocalSnsModule, sns_injector
-
 from .base import *
 
 DEBUG = True
@@ -45,10 +42,6 @@ EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 1025
 # 送信中の文章の暗号化をFalseにします
 EMAIL_USE_TLS = False
-
-# DI設定
-# sns_injector.binder.install(LocalSnsModule())
-# ses_injector.binder.install(LocalSesModule())
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
 
