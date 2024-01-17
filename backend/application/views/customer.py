@@ -2,17 +2,9 @@ import csv
 import tempfile
 from logging import getLogger
 
+import boto3
+import botocore
 import chardet
-from django.db import DatabaseError, transaction
-from django.http import FileResponse, JsonResponse
-from django.utils import timezone
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
-
 from application.filters import CustomerFilter
 from application.models import Address, Customer, Photo
 from application.serializers.customer import (
@@ -25,6 +17,15 @@ from application.serializers.customer import (
     ListCustomerSerializer,
 )
 from application.utils.logs import LoggerName
+from django.db import DatabaseError, transaction
+from django.http import FileResponse, JsonResponse
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 
 class CustomerViewSet(ModelViewSet):
@@ -188,6 +189,24 @@ class CustomerViewSet(ModelViewSet):
                 self.application_logger.warning(e)
                 return JsonResponse(data={"msg": f"csvファイルのimportに失敗しました。"})
         return JsonResponse(data={"msg": "csvファイルのimportに成功しました"})
+
+    @transaction.atomic
+    @action(methods=["post"], detail=True)
+    def send_sms(self,request):
+        customer = self.get_object()
+        serializer = self.get_serializer(
+            customer, data=request.data,
+        )
+        serializer.is_valid(raise_exception=True)
+        try:
+            phone_number = serializer.validated_data["phone_number"]
+            message = serializer.validated_data["message"]
+            response = self.sns_resource.meta.client.publish(
+                PhoneNumber=phone_number, Message=message
+            )
+            message_id = response["MessageId"]
+        except BaseException:
+            raise
 
     @action(methods=["get"], detail=False)
     def csv_export(self, request):
