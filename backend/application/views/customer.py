@@ -3,6 +3,18 @@ import tempfile
 from logging import getLogger
 
 import chardet
+from botocore.exceptions import ClientError
+from django.conf import settings
+from django.db import DatabaseError, transaction
+from django.http import FileResponse, JsonResponse
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+
 from application.filters import CustomerFilter
 from application.models import Address, Customer, Photo
 from application.serializers.customer import (
@@ -15,18 +27,6 @@ from application.serializers.customer import (
     ListCustomerSerializer,
 )
 from application.utils.logs import LoggerName
-from botocore.exceptions import ClientError
-from django.conf import settings
-from django.db import DatabaseError, transaction
-from django.http import FileResponse, JsonResponse
-from django.utils import timezone
-from django_filters.rest_framework import DjangoFilterBackend
-from project.settings.environment import django_settings
-from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 
 
 class CustomerViewSet(ModelViewSet):
